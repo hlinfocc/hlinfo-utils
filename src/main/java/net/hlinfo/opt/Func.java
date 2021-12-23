@@ -1,5 +1,6 @@
 package net.hlinfo.opt;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -37,9 +38,15 @@ import net.hlinfo.annotation.MColumn;
 
 /**
  * 一些静态的工具方法
+ *  @author 玉之银
  */
 public class Func {
 
+	/**
+	 * 角度与弧度的换算
+	 * @param d
+	 * @return 弧度
+	 */
 	public static double rad(double d) {
 		return d * Math.PI / 180.0;
 	}
@@ -53,7 +60,7 @@ public class Func {
 	 * 验证手机号
 	 *
 	 * @param phone
-	 * @return
+	 * @return 是手机号返回true，否则返回false
 	 */
 	public static boolean checkPhone(String phone) {
 		 String CM_NUM = "^((13[4-9])|(14[7-8])|(15[0-2,7-9])|(165)|(178)|(18[2-4,7-8])|(19[5,8]))\\d{8}|(170[3,5,6])\\d{7}$";
@@ -74,7 +81,11 @@ public class Func {
 	        return M_CT_NUM.matches();
 	}
 
-
+	/**
+	 * 获取随机数
+	 * @param length 随机数长度
+	 * @return 随机数
+	 */
 	public static String getRandom(int length) {
 		Random random = new Random();
 		StringBuilder rs = new StringBuilder();
@@ -86,8 +97,7 @@ public class Func {
 
 	/**
 	 * 生成15位数ID
-	 *
-	 * @return
+	 * @return 15位数ID
 	 */
 	public static String getId() {
 		long millis = System.currentTimeMillis();
@@ -100,8 +110,8 @@ public class Func {
 	/**
 	 * 过滤掉手机端输入的表情字符
 	 *
-	 * @param source
-	 * @return
+	 * @param source 源字符串
+	 * @return 过滤后的字符串
 	 */
 	public static String filterEmoji(String source) {
 		if (source == null) {
@@ -117,19 +127,25 @@ public class Func {
 		return source;
 	}
 
-
+	/**
+	 * 获取UUID（32位）
+	 * @return 不包含-号的uuid
+	 */
 	public static String UUID() {
-		String s = java.util.UUID.randomUUID().toString();
-		return s.replaceAll("-", "");
+		return java.util.UUID.randomUUID().toString().replaceAll("-", "");
 	}
+	/**
+	 * 获取UUID（36位）
+	 * @return 包含-号的uuid
+	 */
 	public static String UUID36() {
-		String s = java.util.UUID.randomUUID().toString();
-		return s;
+		return java.util.UUID.randomUUID().toString();
 	}
 
 	/**
+	 * JAVA生成短8位UUID
 	 * 来源：https://blog.csdn.net/andy_miao858/article/details/9530245
-	 * @return
+	 * @return 8位UUID
 	 */
 	public static String generateShortUuid() {
 		String[] chars = new String[] { "a", "b", "c", "d", "e", "f",
@@ -150,7 +166,7 @@ public class Func {
 	/**
 	 * 数字小于10,在前面加前导0
 	 * @param x
-	 * @return
+	 * @return 加前导0的数字字符串
 	 */
 	public static String numAddPrefixZero(int x) {
 		if (x < 10) {
@@ -160,7 +176,7 @@ public class Func {
 	}
 	/**
 	 * 生成uuid并转为数字，长度共18位
-	 * @return
+	 * @return 数字类型UUID
 	 */
 	public static long longuuid() {
 		return longuuid(java.util.UUID.randomUUID().toString());
@@ -168,7 +184,7 @@ public class Func {
 	/**
 	 * uuid转为数字，根据https://blog.csdn.net/andy_miao858/article/details/9530245改写,
 	 * 前后各加了一位随机数，长度共18位
-	 * @return
+	 * @return 数字类型UUID
 	 */
 	public static long longuuid(String uuid) {
 		if(isBlank(uuid)) {
@@ -187,8 +203,10 @@ public class Func {
 		return string2Long(shortBuffer.toString());
 	}
 
-	/*
+	/**
 	 * 中文转unicode编码
+	 * @param gbString 中文字符串
+	 * @return unicode编码
 	 */
 	public static String gbEncoding(final String gbString) {
 		char[] utfBytes = gbString.toCharArray();
@@ -205,9 +223,8 @@ public class Func {
 
 	/**
 	 * 获取多少分钟之后的时间
-	 *
 	 * @param min 分钟
-	 * @return
+	 * @return 指定分钟后的时间，yyyyMMddHHmmss格式
 	 */
 	public final static String getNowFullTimeByXAfter(int min) {
 		if (min == 0) {
@@ -220,6 +237,11 @@ public class Func {
 		return rzDate;
 	}
 
+	/**
+	 * BigDecimal转换为长整型
+	 * @param bd1 BigDecimal对象
+	 * @return 长整型
+	 */
 	public static long dec2Value(BigDecimal bd1) {
 		BigDecimal bd2 = bd1.multiply(new BigDecimal(100));
 		long total_fee = bd2.longValue();
@@ -229,8 +251,8 @@ public class Func {
 	/**
 	 * 去除文本中的html
 	 *
-	 * @param htmlStr
-	 * @return
+	 * @param htmlStr html文本
+	 * @return 去除html的字符串
 	 */
 	public static String delHTMLTag(String htmlStr) {
 		if(Func.isBlank(htmlStr)) {
@@ -253,9 +275,8 @@ public class Func {
 
 	/**
 	 * 在html中获取图片地址
-	 *
-	 * @param html
-	 * @return
+	 * @param html HTML字符串
+	 * @return 图片地址列表
 	 */
 	public static List<String> getImgByHtml(String html) {
 		List<String> srcList = new ArrayList<String>(); // 用来存储获取到的图片地址
@@ -280,10 +301,9 @@ public class Func {
 	}
 
 	/**
-	 * 将size B转换为KB, MB等等
-	 *
-	 * @param size
-	 * @return
+	 * 将字节 B转换为KB, MB等等
+	 * @param size 字节
+	 * @return 转换后的数据
 	 */
 	public static String getPrintSize(long size) {
 		// 如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
@@ -311,7 +331,12 @@ public class Func {
 			return String.valueOf((size / 100)) + "." + String.valueOf((size % 100)) + " GB";
 		}
 	}
-
+	/**
+	 * 正则表达式匹配文本
+	 * @param text 字符串
+	 * @param regex 正则表达式
+	 * @return 匹配的文本
+	 */
 	public static String getText(String text, String regex) {
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(text);
@@ -1283,8 +1308,75 @@ public class Func {
 		System.out.println(matcher.replaceAll(""));
 		return matcher.replaceAll("");
 	}
-
-
+    
+    /**
+     * 获取指定对象的指定属性的值
+     * @param object 实体对象
+     * @param fieldName 属性名
+     * @return 指定属性的值
+     */
+    public static Object getObjectPropertyValue(Object object,String fieldName) {
+    	try {
+			Field field = object.getClass().getDeclaredField(fieldName);
+			PropertyDescriptor pd=new PropertyDescriptor(field.getName(), object.getClass());
+			Method rM = pd.getReadMethod();//获得读方法
+			Object value = rM.invoke(object);
+			field.getType().toString();
+			if(value!=null) {
+				return value;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+    	return "";
+    }
+    /**
+     * 获取指定对象的所有属性(没有属性返回空)
+     * @param beanClass 实体对象
+     * @return 属性list
+     */
+    public static List<String> getObjectPropertyAllKey(Class<?> beanClass) {
+    	try {
+    		List<Field> fs = new ArrayList<>();
+			do {
+				Field[] pfs = beanClass.getDeclaredFields();
+				fs.addAll(Arrays.asList(pfs));
+				beanClass = beanClass.getSuperclass();
+			}while(!equals(beanClass.getName(), Object.class.getName()));
+    		
+			List<String> fieldNameList = new ArrayList<String>();
+			for (Field field : fs) {
+				fieldNameList.add(field.getName());
+			}
+			return fieldNameList;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} 
+    	return new ArrayList<String>();
+    }
+    /**
+     * 获取指定对象的所有属性(没有属性抛出异常)
+     * @param beanClass 实体对象
+     * @return 属性list
+     * @throws Exception 没有找到对象属性
+     */
+    public static List<String> getObjectAllProperty(Class<?> beanClass) throws Exception {
+		List<Field> fs = new ArrayList<>();
+		do {
+			Field[] pfs = beanClass.getDeclaredFields();
+			fs.addAll(Arrays.asList(pfs));
+			beanClass = beanClass.getSuperclass();
+		}while(!equals(beanClass.getName(), Object.class.getName()));
+		
+		List<String> fieldNameList = new ArrayList<String>();
+		for (Field field : fs) {
+			fieldNameList.add(field.getName());
+		}
+		if(fieldNameList==null || fieldNameList.isEmpty()) {
+			throw new Exception("没有找到该类的字段");
+		}
+		return fieldNameList;
+    }
 	/**
 	 * 将实体对象的属性转为mysql查询语句的select 和from中的字段
 	 * prex.user_name as fieldPrexuserName

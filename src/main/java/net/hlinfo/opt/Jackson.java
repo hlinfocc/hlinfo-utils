@@ -16,6 +16,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.core.JsonParser;
 
+/**
+ * Jackson常用操作工具
+ * @author 玉之银
+ *
+ */
 public class Jackson {
 	private static Logger log = Logger.getLogger(Jackson.class.toString());
 	
@@ -40,7 +45,7 @@ public class Jackson {
 	/**
 	 * 将对象转换为json字符串
 	 * @param object
-	 * @return
+	 * @return json字符串
 	 */
 	public static String toJSONString(Object object) {
 		return toJSONString(object,false);
@@ -48,7 +53,7 @@ public class Jackson {
 	/**
 	 * 将对象转换为json字符串，是否格式化输出
 	 * @param object
-	 * @return
+	 * @return 格式化的json字符串
 	 */
 	public static String toJSONString(Object object,boolean pretty) {
 		try {
@@ -66,7 +71,7 @@ public class Jackson {
 	 * @param <T>
 	 * @param json json字符串
 	 * @param clazz the class of T
-	 * @return
+	 * @return 对象T
 	 */
 	public static <T> T toJavaObject(String json,Class<T> clazz) {
 		try {
@@ -93,7 +98,7 @@ public class Jackson {
 	  * @param <T>
 	  * @param json json数组字符串
 	  * @param clazz the class of T
-	  * @return
+	  * @return List<T>对象
 	  */
 	public static <T> List<T> toList(String json,Class<T> clazz) {
 		try {
@@ -109,7 +114,7 @@ public class Jackson {
 	  * 将json字符串反序列化为List,TypeReference方式
 	  * @param <T>
 	  * @param json json数组字符串
-	  * @return
+	  * @return List<T>对象
 	  */
 	public static <T> List<T> toList(String json) {
 		try {
@@ -126,7 +131,7 @@ public class Jackson {
 	  * @param <T>
 	  * @param json json数组字符串
 	  * @param clazz the class of T
-	  * @return
+	  * @return JsonNode对象
 	  */
 	public static JsonNode toJsonObject(String jsonString) {
 		try {
@@ -141,7 +146,7 @@ public class Jackson {
 	  * @param <T>
 	  * @param json json数组字符串
 	  * @param clazz the class of T
-	  * @return
+	  * @return JsonNode对象
 	  */
 	public static JsonNode toJsonObject(Object object) {
 		try {
