@@ -165,7 +165,7 @@ public class Func {
 	}
 	/**
 	 * 数字小于10,在前面加前导0
-	 * @param x
+	 * @param x 传入的数字
 	 * @return 加前导0的数字字符串
 	 */
 	public static String numAddPrefixZero(int x) {
@@ -344,7 +344,11 @@ public class Func {
 			return matcher.group(1);
 		return null;
 	}
-
+	/**
+	 * 字符串转整型
+	 * @param s 含数字的字符串
+	 * @return 整型数据
+	 */
 	public static int string2int(String s) {
 		if (s == null)
 			return 0;
@@ -353,6 +357,11 @@ public class Func {
 			return 0;
 		return Integer.parseInt(s);
 	}
+	/**
+	 * 对象转整型
+	 * @param s 含数字的对象
+	 * @return 整型数据
+	 */
 	public static int string2int(Object s) {
 		if (s == null) {return 0;}
 		String str = s.toString();
@@ -360,7 +369,11 @@ public class Func {
 		if ("".equals(str) || str == null){return 0;}
 		return Integer.parseInt(str);
 	}
-
+	/**
+	 * 字符串转长整型
+	 * @param s 含数字的字符串
+	 * @return 长整型数据
+	 */
 	public static Long string2Long(String s) {
 		if (s == null)
 			return 0l;
@@ -369,7 +382,11 @@ public class Func {
 			return 0l;
 		return Long.parseLong(s);
 	}
-
+	/**
+	 * 字符串转浮点型
+	 * @param s 含数字的字符串
+	 * @return 浮点型数据
+	 */
 	public static float string2Float(String s) {
 		if (s == null)
 			return 0l;
@@ -378,8 +395,12 @@ public class Func {
 			return 0l;
 		return Float.parseFloat(s);
 	}
-
-	public static long obj2int(Object obj) {
+	/**
+	 * 对象转长整型
+	 * @param obj 含数字的对象
+	 * @return 长整型数据
+	 */
+	public static long obj2long(Object obj) {
 		if (obj == null)
 			return 0;
 		try {
@@ -390,7 +411,12 @@ public class Func {
 			return 0;
 		}
 	}
-	public static String object2String(Object s) {
+	/**
+	 * 对象toString
+	 * @param s 对象
+	 * @return 字符串
+	 */
+	public static String objectToString(Object s) {
 		return s==null?"":s.toString();
 	}
 	/**
@@ -403,25 +429,46 @@ public class Func {
 		if(bd.compareTo(BigDecimal.ZERO)==0) {return true;}
 		return false;
 	}
+	/**
+	 * 判断BigDecimal类型是否不为空或者0
+	 * @param bd
+	 * @return 为null或者0返回flase,否则返回true
+	 */
 	public static boolean BigDecimalIsNotEmpty(BigDecimal bd) {
 		return !BigDecimalIsEmpty(bd);
 	}
-    
+    /**
+     * 判断是否IPV4 地址
+     * @param input 输入字符串
+     * @return 是IPV4返回true，否则false
+     */
 	public static boolean isIPv4Address(final String input) {
 		 Pattern IPv4Pattern = Pattern.compile("^(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
         return IPv4Pattern.matcher(input).matches();
     }
-
+	/**
+     * 判断是否IPV6 地址
+     * @param input 输入字符串
+     * @return 是IPV6返回true，否则false
+     */
     public static boolean isIPv6StdAddress(final String input) {
     	Pattern IPv6StdPattern = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
         return IPv6StdPattern.matcher(input).matches();
     }
-
+    /**
+     * 判断是否IPV6 地址
+     * @param input 输入字符串
+     * @return 是IPV6返回true，否则false
+     */
     public static boolean isIPv6HexCompressedAddress(final String input) {
     		Pattern IPV6HexCompressedPattrern = Pattern.compile("^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
         return IPV6HexCompressedPattrern.matcher(input).matches();
     }
-
+    /**
+     * 判断是否IPV6 地址
+     * @param input 输入字符串
+     * @return 是IPV6返回true，否则false
+     */
     public static boolean isIPv6Address(final String input) {
         return isIPv6StdAddress(input) || isIPv6HexCompressedAddress(input);
     }
@@ -484,59 +531,15 @@ public class Func {
         return "0.0.0.0";
     }
 	
-	public static String getSalary(long min,long max) {
-		if(min==-1 && max==-1) {
-			return "面议";
-		}
-		if(min==-1) {
-			String maxsalary = max+"";
-			if(max>1000) {maxsalary = max/1000 + "K";}
-			return maxsalary+"以下";
-		}
-		if(max==-1) {
-			String minsalary = min+"";
-			if(min>1000) {minsalary = min/1000 + "K";}
-			return minsalary+"以上";
-		}
-		String minsalary = min+"";
-		String maxsalary = max+"";
-		if(max>1000) {maxsalary = max/1000 + "K";}
-		if(min>1000) {minsalary = min/1000 + "K";}
-		return minsalary+"-"+maxsalary;
-	}
-
-	public static String getWorkExpSalary(BigDecimal min,BigDecimal max) {
-		if(min==null) {
-			min = new BigDecimal("0");
-		}
-		if(max==null) {
-			max = new BigDecimal("0");
-		}
-		if(min.compareTo(new BigDecimal("-1")) == 0) {
-			String maxsalary = max+"";
-			if(max.compareTo(new BigDecimal("1000"))==1) {maxsalary = max.divide(new BigDecimal("1000"),0,BigDecimal.ROUND_HALF_UP) + "K";}
-			return maxsalary+"以下";
-		}
-		if(max.compareTo(new BigDecimal("-1")) == 0) {
-			String minsalary = min+"";
-			if(min.compareTo(new BigDecimal("1000"))==1) {minsalary = min.divide(new BigDecimal("1000"),0,BigDecimal.ROUND_HALF_UP) + "K";}
-			return minsalary+"以上";
-		}
-		String minsalary = min+"";
-		String maxsalary = max+"";
-		if(max.compareTo(new BigDecimal("1000"))==1) {maxsalary = max.divide(new BigDecimal("1000"),0,BigDecimal.ROUND_HALF_UP) + "K";}
-		if(min.compareTo(new BigDecimal("1000"))==1) {minsalary = min.divide(new BigDecimal("1000"),0,BigDecimal.ROUND_HALF_UP) + "K";}
-		return minsalary+"-"+maxsalary;
-	}
 	/**
 	 * 获取学历
-	 * @param edu
-	 * @return
+	 * @param edu 学历数字
+	 * @return 学历中文
 	 */
 	public static String getEducation(int edu) {
 		String edutxt = "无";
 		if(edu==0) {return "无";}
-		String[] eduarr = {"无","小学","中学","初中","高中","专科","中专","大专","本科","硕士","博士","博士后"};
+		String[] eduarr = {"无","小学","中学","初中","中专","高中","专科","本科","硕士研究生","博士研究生"};
 		String[] edumode = {"","以下","以上"};
 		int a = edu%10;//对10取余，可得到个位数
 		int b = edu/10;//除10得到十位数，由于b为整形，小数位会自动省略
@@ -546,8 +549,8 @@ public class Func {
 
 	/**
 	 * 判断实体类中每个属性是否都为空
-	 * @param o
-	 * @return
+	 * @param o 实体对象
+	 * @return 每个属性都为空true,否则flase
 	 */
 	public static boolean allFieldIsNULL(Object o){
 		if(o==null) {return true;}
@@ -594,7 +597,11 @@ public class Func {
 		}
 
 	}
-
+	/**
+	 * 对象是否为空
+	 * @param obj 对象
+	 * @return 为空返回true，否则false
+	 */
 	public static boolean isEmpty(Object obj) {
 		if (obj == null) {
 			return true;
@@ -624,10 +631,9 @@ public class Func {
 
 	/**
 	 * map转obj
-	 * @param <T>
-	 * @param cls
-	 * @param map
-	 * @return
+	 * @param cls 对象类型
+	 * @param map 数据
+	 * @return 对象
 	 */
 	public static <T> T map2obj(Class<T> cls, Map map){
 		T object = null;
@@ -675,11 +681,10 @@ public class Func {
 	 * 	n1: {age:1, name:'n1', addr:"a1"},
 	 *  n2: {age:2,name:"n2", addr:"a3"}
 	 * }
-	 * @param <T>
 	 * @param list 需要转为Map的list
 	 * @param key 作为map的key值，为list中item的其中一个字段的值
 	 * 			，不能是数字字段，必须为字符串且不重复
-	 * @return
+	 * @return Map对象
 	 */
 	public static <T> Map list2map(List<T> list, String key) {
 		if(list == null || list.size() <= 0 || Func.isBlank(key)) {
@@ -732,17 +737,17 @@ public class Func {
 	/**
 	 * 过滤字符串中指定的多个字符，如有多个则全部过滤
 	 *
-	 * @param str   字符串
-	 * @param chars 字符列表
+	 * @param s 字符串
+	 * @param charArr 字符列表
 	 * @return 过滤后的字符
 	 */
 	public static String removeChar(CharSequence s, char... charArr) {
 		if (null == s || charArr.length<=0) {
-			return object2String(s);
+			return objectToString(s);
 		}
 		final int len = s.length();
 		if (0 == len) {
-			return object2String(s);
+			return objectToString(s);
 		}
 		final StringBuilder builder = new StringBuilder(len);
 		char c;
@@ -879,6 +884,12 @@ public class Func {
 		// found digit it to make sure weird stuff like '.' and '1E-' doesn't pass
 		return false == allowSigns && foundDigit;
 	}
+	/**
+	 * 正则匹配
+	 * @param pattern 正则对象
+	 * @param content 待匹配内容
+	 * @return 是否匹配成功
+	 */
 	public static boolean isMatch(Pattern pattern, String content) {
         if (content == null || pattern == null)
             // 提供null的字符串为不匹配
@@ -887,8 +898,8 @@ public class Func {
     }
 	/**
 	 * 判断是否统一社会信用代码
-	 * @param s
-	 * @return
+	 * @param s 统一社会信用代码字符串
+	 * @return 是否统一社会信用代码true，否则false
 	 */
 	public static boolean isUSCC(String s) {
         if (isBlank(s)) {return false;}
@@ -901,7 +912,7 @@ public class Func {
 	 * @param htmlstr html内容
 	 * @param isEndTag 是否过滤结束标签
 	 * @param tagarr HTML标签数组,不包括&lt;或&gt;符号，如：new String[] {"html","body","p"}
-	 * @return
+	 * @return 过滤后不含指定html标签的内容
 	 */
 	public static String delHtmlTagOnly(String htmlstr,boolean isEndTag, String... tagarr) {
 		if(isBlank(htmlstr) || tagarr==null || tagarr.length<=0) {
@@ -940,8 +951,8 @@ public class Func {
 	}
 	/**
 	 * 字符串类型日期转换成Date类型
-	 * @param date
-	 * @return
+	 * @param date 字符串类型日期
+	 * @return Date类型日期
 	 */
 	public static Date string2Date(String date) {
 		try {
@@ -956,8 +967,8 @@ public class Func {
 	}
 	/**
 	 * 根据出生年月日获取年龄
-	 * @param dateOfBirth
-	 * @return
+	 * @param birthDay 出生年月日Date对象
+	 * @return 年龄
 	 */
 	public static int getAge(Date birthDay) {
         int age = 0;
@@ -981,8 +992,8 @@ public class Func {
     }
 	/**
 	 * 根据出生年月日获取年龄
-	 * @param dateOfBirth
-	 * @return
+	 * @param birthDay 出生年月日
+	 * @return 年龄
 	 */
 	public static int getAge(String birthDay) {
         int age = 0;
@@ -1008,8 +1019,7 @@ public class Func {
 	/**
      * 如果此字符串为 null 或者全为空白字符(包含：空格、tab 键、换行符)，则返回 true
      *
-     * @param cs
-     *            字符串
+     * @param cs 字符串
      * @return 如果此字符串为 null 或者全为空白字符，则返回 true
      */
 	public static boolean isBlank(CharSequence cs) {
@@ -1025,8 +1035,7 @@ public class Func {
 	/**
      * 如果此字符串不为 null 或者全为空白字符(包含：空格、tab 键、换行符)，则返回 true
      *
-     * @param cs
-     *            字符串
+     * @param cs 字符串
      * @return 如果此字符串不为 null 或者全为空白字符，则返回 true
      */
     public static boolean isNotBlank(CharSequence cs) {
@@ -1081,8 +1090,8 @@ public class Func {
 
     /**
      * 实体对象转Map
-     * @param object
-     * @return
+     * @param object 实体对象
+     * @return Map对象
      */
     public static Map<String, Object> entity2Map(Object object) {
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -1100,7 +1109,11 @@ public class Func {
 	    }
 	    return map;
 	}
-
+    /**
+     * 是否包含emoji表情
+     * @param codepoint 字符
+     * @return 含emoji表情true
+     */
     private static boolean isemojicharacter(char codepoint) {
         return (codepoint == 0x0) || (codepoint == 0x9) || (codepoint == 0xa)
                 || (codepoint == 0xd)
@@ -1112,8 +1125,8 @@ public class Func {
     /**
      * 过滤emoji 或者 其他非文字类型的字符
      *
-     * @param source
-     * @return
+     * @param source 源字符串
+     * @return 过滤后的字符串
      */
     public static String filteremoji(String source) {
         if (Func.isBlank(source)) {
@@ -1145,8 +1158,8 @@ public class Func {
 
     /**
      * 通过身份证号获取生日
-     * @param identifyNumber
-     * @return
+     * @param identifyNumber 身份证号
+     * @return 生日
      */
     public static String getBirthByIdcard(String identifyNumber){
         String dateOfBirth = "";
@@ -1162,7 +1175,7 @@ public class Func {
     }
     /**
      * 通过身份证号获取生日和性别
-     * @param identifyNumber
+     * @param identifyNumber 身份证号
      * @return 1:男  2:女
      */
     public static int getSexByIdcard(String identifyNumber){
@@ -1207,7 +1220,10 @@ public class Func {
                                      .append(s.subSequence(1, len))
                                      .toString();
     }
-
+    /**
+     * 获取民族
+     * @return 民族
+     */
     public static String getNation(){
 		String s = new String("{nation:\"汉族\"},"
 				+"{nation:\"苗族\"},"
@@ -1270,6 +1286,10 @@ public class Func {
 				+"{nation:\"其他\"}");
 		return "["+s+"]";
 	}
+    /**
+     * 获取政治面貌
+     * @return 政治面貌
+     */
 	public static String getPolicy(){
 		String s=new String("{policy:\"群众\"},"
 				+"{policy:\"中共党员\"},"
@@ -1288,9 +1308,9 @@ public class Func {
 	}
 	/**
 	 * 截取末尾几位
-	 * @param s
-	 * @param len
-	 * @return
+	 * @param s 源字符串
+	 * @param len 截取位数
+	 * @return 截取的数据
 	 */
 	public static String laststr(String s,int len) {
 		if(s==null || "".equals(s)) {return "";}
@@ -1299,8 +1319,8 @@ public class Func {
 	}
 	/**
 	 * 过滤字符串中的非数字
-	 * @param text
-	 * @return
+	 * @param text 源字符串
+	 * @return 不含数字的字符串
 	 */
 	public static String getIntStr(String text) {
 		Pattern pattern = Pattern.compile("[^0-9]");
@@ -1380,10 +1400,10 @@ public class Func {
 	/**
 	 * 将实体对象的属性转为mysql查询语句的select 和from中的字段
 	 * prex.user_name as fieldPrexuserName
-	 * @param cls 实体class
+	 * @param cls 实体对象类型
 	 * @param prex 数据字段前缀
 	 * @param fieldPrex 字段前缀
-	 * @return
+	 * @return mysql select 字段字符串 
 	 */
 	public static String vo2mysqlField(Class<?> cls
 			, String prex
@@ -1432,10 +1452,10 @@ public class Func {
 	/**
 	 * 将实体对象的属性转为Pgsql查询语句的select 和from中的字段
 	 * prex.user_name as fieldPrexuserName
-	 * @param cls 实体class
+	 * @param cls 实体对象类型
 	 * @param prex 数据字段前缀
 	 * @param fieldPrex 字段前缀
-	 * @return
+	 * @return PgSQL select 字段字符串 
 	 */
 	public static String vo2PgsqlField(Class<?> cls
 			, String prex
@@ -1481,11 +1501,11 @@ public class Func {
 	/**
 	 * 将实体对象的属性转为Pgsql查询语句的select 和from中的字段
 	 * prex.user_name as fieldPrexuserName
-	 * @param cls 实体class
+	 * @param cls 实体对象类型
 	 * @param prex 数据字段前缀
 	 * @param fieldPrex 字段前缀
 	 * @param isExtends 是否有继承
-	 * @return
+	 * @return PgSQL select 字段字符串 
 	 */
 	public static String vo2PgsqlField(Class<?> cls
 			, String prex
@@ -1537,12 +1557,12 @@ public class Func {
 	/**
 	 * 将实体对象的属性转为Pgsql查询语句的select 和from中的字段
 	 * prex.user_name as fieldPrexuserName
-	 * @param cls 实体class
+	 * @param cls 实体对象类型
 	 * @param alias 表的别名或表名
 	 * @param fieldPrex 字段前缀
 	 * @param filterField 需要过滤的字段，格式为pojo实体名,多个用竖线|分隔，如：userName|userPasswd
 	 * @param allowField 只允许的字段，格式为pojo实体名,多个用竖线|分隔，如：userName|userPasswd
-	 * @return
+	 * @return PgSQL select 字段字符串 
 	 */
 	public static String vo2PgsqlField(Class<?> cls
 			, String alias
@@ -1610,9 +1630,9 @@ public class Func {
 
 	/**
 	 * 获得最近几个月
-	 * @param size
-	 * @param asc
-	 * @return
+	 * @param size 数量
+	 * @param asc 排序，正序：true，倒序：false
+	 * @return 最近size个月列表
 	 */
 	public static List<String> getLastMonths(int size,boolean asc) {
         Calendar c = Calendar.getInstance();
@@ -1633,14 +1653,19 @@ public class Func {
 
 	 /**
 	  * 正则校验是否金额
-	  * @param str
-	  * @return
+	  * @param str 字符串
+	  * @return 是金额true，否则false
 	  */
 	 public static boolean isMoney(String str) {
 	        Pattern pattern = Pattern.compile("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$"); // 判断小数点后2位的数字的正则表达式
 	        Matcher match = pattern.matcher(str);
 	        return match.matches();
 	}
+	 /**
+	  * 正则校验是否不是钱
+	  * @param str 字符串
+	  * @return 不是钱true
+	  */
 	 public static boolean isNotMoney(String str) {
 		 return !isMoney(str);
 	 }
@@ -1652,14 +1677,14 @@ public class Func {
 	 public static final class Times{
 		 /**
 		  * 获取当前年份
-		  * @return
+		  * @return 当前年份
 		  */
 		 public final static int getYear(){
 			return LocalDate.now().getYear();
 		 }
 		 /**
 		  * 获取当前日期:yyyy-MM-dd
-		  * @return
+		  * @return 当前日期
 		  */
 		 public final static String nowDate() {
 				LocalDate ld = LocalDate.now();
@@ -1667,7 +1692,7 @@ public class Func {
 		 }
 		 /**
 		  * 获取当前日期:yyyyMMdd
-		  * @return
+		  * @return 当前日期
 		  */
 		 public final static String nowDateBasic() {
 				LocalDate ld = LocalDate.now();
@@ -1675,7 +1700,7 @@ public class Func {
 		 }
 		 /**
 		  * 获取当前年月:yyyyMM
-		  * @return
+		  * @return 当前年月
 		  */
 		 public final static String nowYearMonth() {
 				LocalDate ld = LocalDate.now();
@@ -1683,43 +1708,63 @@ public class Func {
 		 }
 		 /**
 		 * 获取时间：yyyy-MM-dd HH:mm:ss
-		 * @return
+		 * @return 当前年月日时分秒
 		 */
 		public static String now() {
 			return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
 		/**
 		 * 获取时间：yyyyMMddHHmmss
-		 * @return
+		 * @return 当前年月日时分秒，不含分割符号
 		 */
 		public static String nowNumber() {
 			return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		}
 		/**
 		 * 获取时间：yyyyMMddHHmmssSSS
-		 * @return
+		 * @return 当前年月日时分秒毫秒，不含分割符号
 		 */
 		public static String nowNumberFull() {
 			return LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS"));
 		}
+		/**
+		 * Date转LocalDate
+		 * @param date Date对象
+		 * @return LocalDate对象
+		 */
 		public static LocalDate date2LocalDate(Date date) {
 			if(date==null) {
 				throw new NullPointerException("date is null");
 			}
 			return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 		}
+		/**
+		 * Date转LocalDateTime
+		 * @param date Date对象
+		 * @return LocalDateTime对象
+		 */
 		public static LocalDateTime date2LocalDateTime(Date date) {
 			if(date==null) {
 				throw new NullPointerException("date is null");
 			}
 			return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 		}
+		/**
+		 * LocalDate转Date
+		 * @param localdate LocalDate对象
+		 * @return Date对象
+		 */
 		public static Date Localdate2Date(LocalDate localdate) {
 			if(localdate==null) {
 				throw new NullPointerException("localdate is null");
 			}
 			return Date.from(localdate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 		}
+		/**
+		 * LocalDateTime转Date
+		 * @param localDateTime LocalDateTime对象
+		 * @return Date对象
+		 */
 		public static Date LocaldateTime2Date(LocalDateTime localDateTime) {
 			if(localDateTime==null) {
 				throw new NullPointerException("localDateTime is null");
@@ -1728,9 +1773,9 @@ public class Func {
 		}
 		/**
 		 * 时间添+秒s
-		 * @param d
-		 * @param s
-		 * @return
+		 * @param d 时间对象
+		 * @param s 需要添加的秒数
+		 * @return 添加后的时间对象
 		 */
 		public static Date dateAddSecond(Date d, int s) {
 			Calendar c = Calendar.getInstance();
@@ -1740,9 +1785,9 @@ public class Func {
 		}
 		/**
 		 * 时间添+秒s
-		 * @param d
-		 * @param s
-		 * @return
+		 * @param d 时间对象
+		 * @param s 需要添加的秒数
+		 * @return 添加后的时间对象
 		 */
 		public  static Date dateAddSecond(Date d, long s) {
 			return dateAddSecond(d, (int)s);
@@ -1750,8 +1795,8 @@ public class Func {
 		
 		/**
 		 * 返回时间格式如：2020-02-17 00:00:00
-		 * @param time
-		 * @return
+		 * @param time 时间对象
+		 * @return 格式化的时间对象
 		 */
 		public static Date getStartOfDay(Date time) {
 	        Calendar calendar = Calendar.getInstance();
@@ -1764,8 +1809,8 @@ public class Func {
 	    }
 		/**
 		 * 返回时间格式如：2020-02-19 23:59:59
-		 * @param time
-		 * @return
+		 * @param time 时间对象
+		 * @return 格式化的时间对象
 		 */
 	    public static Date getEndOfDay(Date time) {
 	        Calendar calendar = Calendar.getInstance();
@@ -1780,8 +1825,8 @@ public class Func {
 	    /**
 		 * 格式化日期
 		 * @param dateStr 日期字符串
-		 * @param dtf DateTimeFormatter
-		 * @return
+		 * @param dtf DateTimeFormatter对象
+		 * @return  格式化的日期字符串
 		 */
 		public static String parseDate(String dateStr,DateTimeFormatter dtf){
 			try {
@@ -1803,9 +1848,9 @@ public class Func {
 		}
 		/**
 		 * 格式化日期
-		 * @param dateStr 日期字符串
-		 * @param dtf DateTimeFormatter
-		 * @return
+		 * @param dateTimeStr 日期字符串
+		 * @param dtf DateTimeFormatter对象
+		 * @return 格式化的日期时间对象
 		 */
 		public static Date string2Date(String dateTimeStr,DateTimeFormatter dtf){
 			try {
@@ -1827,9 +1872,9 @@ public class Func {
 		}
 		/**
 		 * 格式化日期
-		 * @param dateStr 日期字符串
-		 * @param dtf DateTimeFormatter
-		 * @return
+		 * @param date 日期对象
+		 * @param dtf DateTimeFormatter对象
+		 * @return 格式化的日期字符串
 		 */
 		public static String date2String(Date date,DateTimeFormatter dtf){
 			try {

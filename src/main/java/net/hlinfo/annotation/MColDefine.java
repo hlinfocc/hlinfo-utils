@@ -20,7 +20,7 @@ public @interface MColDefine {
 	/**
 	 * 数据库字段类型
 	 * @return  MColType类型
-	 * @see net.hlinfo.mybatis.annotation.MColType
+	 * @see net.hlinfo.annotation.MColType
 	 */
 	MColType type() default MColType.AUTO;
 

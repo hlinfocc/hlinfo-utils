@@ -52,6 +52,7 @@ public class AESUtils {
 	
     /**
      * 导入provider
+     * @return 是否导入provider
      */
 	public static boolean initialize() {
 		if (!initialized) {return false;}
@@ -61,7 +62,7 @@ public class AESUtils {
 	}
     /**
      * 生成一个AES密钥对象
-     * @return
+     * @return SecretKeySpec对象
      */
     public static SecretKeySpec generateKey(){
 		try {
@@ -79,7 +80,7 @@ public class AESUtils {
  
     /**
      * 生成一个AES密钥字符串
-     * @return
+     * @return AES密钥字符串
      */
     public static String generateKeyString(){
     	return byte2hex(generateKey().getEncoded());
@@ -89,7 +90,7 @@ public class AESUtils {
      * 加密字节数据
      * @param content
      * @param key
-     * @return
+     * @return 字节数组
      */
     public static byte[] encrypt(byte[] content,byte[] key) {
         try {
@@ -142,9 +143,9 @@ public class AESUtils {
  
     /**
      * 通过byte[]类型的密钥解密byte[]
-     * @param content
-     * @param key
-     * @return
+     * @param content 源数据
+     * @param key 密钥
+     * @return 解密后的字节数据
      */
     public static byte[] decrypt(byte[] content,byte[] key) {
         try {
@@ -158,7 +159,12 @@ public class AESUtils {
         return null;
     }
     
-    // 生成iv
+    /**
+     * 生成iv
+     * @param iv iv字节数据
+     * @return AlgorithmParameters
+     * @throws Exception
+     */
  	public static AlgorithmParameters generateIV(byte[] iv) throws Exception {
  		AlgorithmParameters params = AlgorithmParameters.getInstance("AES");
  		params.init(new IvParameterSpec(iv));
@@ -169,7 +175,7 @@ public class AESUtils {
      * 通过String类型的密钥 解密String类型的密文
      * @param content
      * @param key
-     * @return
+     * @return 解密后的数据
      */
     public static String decrypt(String content, String key) {
         byte[] data = null;
@@ -193,7 +199,7 @@ public class AESUtils {
      * 通过byte[]类型的密钥解密byte[]，主要用于微信平台(小程序/开放平台)数据解密
      * @param content
      * @param key
-     * @return
+     * @return 解密的byte[]数据
      */
     public static byte[] wxDecrypt(byte[] content,byte[] key,byte[] iv) {
 		  initialize();
@@ -209,10 +215,10 @@ public class AESUtils {
     }
     /**
      * 微信平台(小程序/开放平台)数据解密
-     * @param content
-     * @param sessionKey
-     * @param iv
-     * @return
+     * @param content 待解密数据
+     * @param sessionKey 密钥
+     * @param iv IV向量
+     * @return 解密出的数据
      */
     public static String wxDecrypt(String content, String sessionKey,String iv) {
 		String result = "";
@@ -229,9 +235,9 @@ public class AESUtils {
     }
     /**
      * 通过byte[]类型的密钥 解密String类型的密文
-     * @param content
-     * @param key
-     * @return
+     * @param content 待解密数据
+     * @param key 密钥
+     * @return 解密出的数据
      */
     public static String decrypt(String content,byte[] key) {
     	try {
@@ -247,8 +253,8 @@ public class AESUtils {
  
     /**
      * 字节数组转成16进制字符串
-     * @param b
-     * @return
+     * @param b 字节数组
+     * @return 16进制字符串
      */
     public static String byte2hex(byte[] b) { // 一个字节的数，
         StringBuffer sb = new StringBuffer(b.length * 2);
@@ -267,8 +273,8 @@ public class AESUtils {
     /**
      * byte数组转化为16进制字符串
      * 
-     * @param bytes
-     * @return
+     * @param bytes byte数组
+     * @return 16进制字符串
      */
     private static String byteToHexString(byte[] bytes) {
         StringBuffer sb = new StringBuffer();
@@ -289,8 +295,8 @@ public class AESUtils {
     
     /**
      * 将hex字符串转换成字节数组
-     * @param inputString
-     * @return
+     * @param inputString 字符串
+     * @return 字节数组
      */
     private static byte[] hex2byte(String inputString) {
         if (inputString == null || inputString.length() < 2) {
@@ -308,10 +314,10 @@ public class AESUtils {
 
  
 	
-    /****
+    /**
      * 获取对称加密随机生成的秘钥串
      * 
-     * @return
+     * @return 密钥
      */
     public static String getKey() {
         try {
@@ -352,8 +358,7 @@ public class AESUtils {
 	/**
 	 * 删除解密后明文的补位字符
 	 *
-	 * @param decrypted
-	 *            解密后的明文
+	 * @param decrypted 解密后的明文
 	 * @return 删除补位字符后的明文
 	 */
 	public static byte[] PKCS7Decode(byte[] decrypted) {
@@ -367,8 +372,7 @@ public class AESUtils {
 	/**
 	 * 将数字转化成ASCII码对应的字符，用于对明文进行补码
 	 *
-	 * @param a
-	 *            需要转化的数字
+	 * @param a 需要转化的数字
 	 * @return 转化得到的字符
 	 */
 	public static char PKCS7Chr(int a) {

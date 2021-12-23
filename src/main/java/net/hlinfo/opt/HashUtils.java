@@ -7,13 +7,16 @@ import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
-
+/**
+ * 
+ * @author 呐喊
+ *
+ */
 public class HashUtils {
 	
 	/**
 	 * 中国国家商用密码杂凑算法SM3<br>
 	 * sm3加密，生成16进制SM3字符串
-	 * @author 呐喊
 	 * @param str 源数据
 	 * @return SM3字符串
 	 */

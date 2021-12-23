@@ -60,12 +60,12 @@ public class QueryResult<T> implements Serializable {
         return (List<T>) list;
     }
 
-    /**
+    /*
      * 转换为特定类型的结果集
      * @param eleType 新的结果集
      * @return 特定类型的结果集
      */
-    @SuppressWarnings("unchecked")
+    //@SuppressWarnings("unchecked")
     /*public <T> List<T> convertList(Class<T> eleType) {
         if (null == list || list.isEmpty())
             return (List<T>) list;

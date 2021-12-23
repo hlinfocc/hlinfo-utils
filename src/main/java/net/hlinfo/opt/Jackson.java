@@ -68,7 +68,6 @@ public class Jackson {
 	}
 	/**
 	 * 将json字符串反序列化为Java对象
-	 * @param <T>
 	 * @param json json字符串
 	 * @param clazz the class of T
 	 * @return 对象T
@@ -95,7 +94,6 @@ public class Jackson {
 	 }
 	 /**
 	  * 将json字符串反序列化为List,Collection Type方式
-	  * @param <T>
 	  * @param json json数组字符串
 	  * @param clazz the class of T
 	  * @return List<T>对象
@@ -112,9 +110,8 @@ public class Jackson {
 	}
 	/**
 	  * 将json字符串反序列化为List,TypeReference方式
-	  * @param <T>
 	  * @param json json数组字符串
-	  * @return List<T>对象
+	  * @return List<T> 对象
 	  */
 	public static <T> List<T> toList(String json) {
 		try {
@@ -128,9 +125,7 @@ public class Jackson {
 	}
 	/**
 	  * 将json字符串反序列化为JsonNode
-	  * @param <T>
-	  * @param json json数组字符串
-	  * @param clazz the class of T
+	  * @param jsonString json字符串
 	  * @return JsonNode对象
 	  */
 	public static JsonNode toJsonObject(String jsonString) {
@@ -143,9 +138,7 @@ public class Jackson {
 	}
 	/**
 	  * 将对象反序列化为JsonNode
-	  * @param <T>
-	  * @param json json数组字符串
-	  * @param clazz the class of T
+	  * @param object json数据字符串对象
 	  * @return JsonNode对象
 	  */
 	public static JsonNode toJsonObject(Object object) {
