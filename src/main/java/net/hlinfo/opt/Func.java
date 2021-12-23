@@ -30,8 +30,6 @@ import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import net.hlinfo.annotation.MColumn;
 
 
@@ -1476,7 +1474,7 @@ public class Func {
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
 		for(int i = 0; i < fs.size(); i ++) {
-			JsonIgnore jsonIgnore = fs.get(i).getAnnotation(JsonIgnore.class);
+			com.fasterxml.jackson.annotation.JsonIgnore jsonIgnore = fs.get(i).getAnnotation(com.fasterxml.jackson.annotation.JsonIgnore.class);
 			if(jsonIgnore != null) {
 				continue;
 			}
@@ -1530,7 +1528,7 @@ public class Func {
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
 		for(int i = 0; i < fs.size(); i ++) {
-			JsonIgnore jsonIgnore = fs.get(i).getAnnotation(JsonIgnore.class);
+			com.fasterxml.jackson.annotation.JsonIgnore jsonIgnore = fs.get(i).getAnnotation(com.fasterxml.jackson.annotation.JsonIgnore.class);
 			if(jsonIgnore != null) {
 				continue;
 			}
@@ -1591,7 +1589,7 @@ public class Func {
 		StringBuilder sb = new StringBuilder();
 		int index = 0;
 		for(int i = 0; i < fs.size(); i ++) {
-			JsonIgnore jsonIgnore = fs.get(i).getAnnotation(JsonIgnore.class);
+			com.fasterxml.jackson.annotation.JsonIgnore jsonIgnore = fs.get(i).getAnnotation(com.fasterxml.jackson.annotation.JsonIgnore.class);
 			if(jsonIgnore != null) {
 				continue;
 			}
