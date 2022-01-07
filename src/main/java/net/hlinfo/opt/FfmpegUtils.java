@@ -85,7 +85,7 @@ public class FfmpegUtils {
 	 * 简单转码，转码为H264编码
 	 * @param inputPath 源视频文件地址
 	 * @param outputPath 输出视频文件地址
-	 * @return
+	 * @return 转码结果信息
 	 */
 	public String transcodeH264(String inputPath,String outputPath) {
 		return this.transcode(inputPath, outputPath, VCodecs.h264,ACodecs.aac);
@@ -94,8 +94,8 @@ public class FfmpegUtils {
 	 * 简单转码，默认音频编码为AAC
 	 * @param inputPath 源视频文件地址
 	 * @param outputPath 输出视频文件地址
-	 * @param codec 视频编码
-	 * @return
+	 * @param vcodec 视频编码
+	 * @return 转码结果信息
 	 */
 	public String transcode(String inputPath,String outputPath,VCodecs vcodec) {
 		return this.transcode(inputPath, outputPath, vcodec,ACodecs.aac);
@@ -104,9 +104,9 @@ public class FfmpegUtils {
 	 * 简单转码
 	 * @param inputPath 源视频文件地址
 	 * @param outputPath 输出视频文件地址
-	 * @param codec 视频编码
+	 * @param vcodec 视频编码
 	 * @param acodec 音频编码
-	 * @return
+	 * @return 转码结果信息
 	 */
 	public String transcode(String inputPath,String outputPath,VCodecs vcodec,ACodecs acodec) {
 		List<String> paramList = this.ffmpegTranscodeParam(inputPath, outputPath, vcodec, acodec);
@@ -131,7 +131,7 @@ public class FfmpegUtils {
 	 * 设置ffmpeg转码参数
 	 * @param inputPath 源视频文件地址
 	 * @param outputPath 输出视频文件地址
-	 * @param codec 视频编码
+	 * @param vcodec 视频编码
 	 * @param acodec 音频编码
 	 * @return 命令参数对象
 	 */
