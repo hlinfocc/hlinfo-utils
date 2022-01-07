@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.core.JsonParser;
 
 /**
@@ -148,6 +150,22 @@ public class Jackson {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			return null;
 		} 
+	}
+	
+	/**
+	  * 创建json数组对象
+	  * @return ArrayNode对象
+	  */
+	public static ArrayNode arrayNode() {
+		return mapper.createArrayNode(); 
+	}
+	
+	/**
+	  * 创建json对象
+	  * @return ObjectNode对象
+	  */
+	public static ObjectNode objectNode() {
+		return mapper.createObjectNode(); 
 	}
 	
 }
