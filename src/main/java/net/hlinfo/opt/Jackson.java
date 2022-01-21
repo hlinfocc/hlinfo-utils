@@ -59,14 +59,20 @@ public class Jackson {
 	 */
 	public static String toJSONString(Object object,boolean pretty) {
 		try {
+			if(object==null) {
+				throw new NullPointerException("paramter is null");
+			}
 			if(pretty) {
-				mapper.writerWithDefaultPrettyPrinter();
+				return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(object);
 			}
 			return mapper.writeValueAsString(object);
 		} catch (JsonProcessingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 			return "";
-		} 
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			return "";
+		}
 	}
 	/**
 	 * 将json字符串反序列化为Java对象
@@ -76,10 +82,15 @@ public class Jackson {
 	 */
 	public static <T> T toJavaObject(String json,Class<T> clazz) {
 		try {
+			if(json==null || "".equals(json)) {
+				throw new NullPointerException("paramter is null");
+			}
 			return mapper.readValue(json, clazz);
 		} catch (JsonMappingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
@@ -102,10 +113,15 @@ public class Jackson {
 	  */
 	public static <T> List<T> toList(String json,Class<T> clazz) {
 		try {
+			if(json==null || "".equals(json)) {
+				throw new NullPointerException("paramter is null");
+			}
 			return mapper.readValue(json, getCollectionType(mapper,List.class,clazz));
 		} catch (JsonMappingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return new ArrayList<T>();
@@ -117,10 +133,15 @@ public class Jackson {
 	  */
 	public static <T> List<T> toList(String json) {
 		try {
+			if(json==null || "".equals(json)) {
+				throw new NullPointerException("paramter is null");
+			}
 			return mapper.readValue(json, new TypeReference<List<T>>() { });
 		} catch (JsonMappingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return new ArrayList<T>();
@@ -132,11 +153,16 @@ public class Jackson {
 	  */
 	public static JsonNode toJsonObject(String jsonString) {
 		try {
+			if(jsonString==null || "".equals(jsonString)) {
+				throw new NullPointerException("paramter is null");
+			}
 			return mapper.readTree(jsonString);
 		} catch (JsonProcessingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
-			return null;
-		} 
+		} catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
 	}
 	/**
 	  * 将对象反序列化为JsonNode
@@ -145,11 +171,16 @@ public class Jackson {
 	  */
 	public static JsonNode toJsonObject(Object object) {
 		try {
+			if(object==null) {
+				throw new NullPointerException("paramter is null");
+			}
 			return mapper.readTree(mapper.writeValueAsString(object));
 		} catch (JsonProcessingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
-			return null;
-		} 
+		}  catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
 	}
 	
 	/**
@@ -165,7 +196,27 @@ public class Jackson {
 	  * @return ObjectNode对象
 	  */
 	public static ObjectNode objectNode() {
-		return mapper.createObjectNode(); 
+		return mapper.createObjectNode();
+	}
+	
+	/**
+	 * 返回指定实体对象的字符串表示
+	 * @param obj 实体对象
+	 * @return 实体对象字符串表示
+	 */
+	public static String entityToString(Object obj) {
+		try {
+			if(obj==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+		}catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			return obj.getClass().getName() + "@" + Integer.toHexString(obj.getClass().hashCode());
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+			return "";
+		}
 	}
 	
 }

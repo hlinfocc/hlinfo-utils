@@ -1668,6 +1668,22 @@ public class Func {
 		 return !isMoney(str);
 	 }
 	 /**
+	 * 计算百分比：如成绩及格率等
+	 * @param total 总数
+	 * @param sub 需要计算的数
+	 * @return 百分比
+	 */
+	public static String percentage(int total,int sub) {
+		if(total==0) {
+			return "0%";
+		}
+		BigDecimal bdtotal = new BigDecimal(total+"");
+		BigDecimal bdsub = new BigDecimal(sub+"");
+		BigDecimal div = bdsub.divide(bdtotal,4,BigDecimal.ROUND_HALF_UP);
+		BigDecimal rs = div.multiply(new BigDecimal("100"));
+		return rs.stripTrailingZeros().toPlainString()+"%";
+	}
+	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net
 	  *

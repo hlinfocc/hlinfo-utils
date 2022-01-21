@@ -17,7 +17,7 @@ hlinfo-utils是一些常用的java小工具集合。
 <dependency>
     <groupId>net.hlinfo</groupId>
     <artifactId>hlinfo-utils</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.5</version>
 </dependency>
 ```
 
