@@ -716,6 +716,22 @@ public class Func {
 		return map;
 	}
 	/**
+	 * 判断list是否为空
+	 * @param list list数据
+	 * @return 为空返回true
+	 */
+	public static boolean listIsEmpty(List<?> list) {
+		return list==null || list.isEmpty();
+	}
+	/**
+	 * 判断list是否不为空
+	 * @param list list数据
+	 * @return 不为空返回true
+	 */
+	public static boolean listIsNotEmpty(List<?> list) {
+		return !listIsEmpty(list);
+	}
+	/**
 	 * 返回数组中指定元素所在位置，未找到返回-1
 	 *
 	 * @param array 数组
