@@ -1,6 +1,7 @@
 package net.hlinfo.opt;
 
 import java.beans.PropertyDescriptor;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -22,6 +23,7 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -1644,25 +1646,14 @@ public class Func {
 
 	/**
 	 * 获得最近几个月
+	 * @see Func.Times.getLastMonths
 	 * @param size 数量
 	 * @param asc 排序，正序：true，倒序：false
 	 * @return 最近size个月列表
 	 */
+	@Deprecated
 	public static List<String> getLastMonths(int size,boolean asc) {
-        Calendar c = Calendar.getInstance();
-        c.setTime(new Date());
-        List<String> list = new ArrayList<String>(size);
-        for (int i=0;i<size;i++) {
-            c.setTime(new Date());
-            c.add(Calendar.MONTH, -i);
-            Date m = c.getTime();
-            list.add(Times.date2String(m, DateTimeFormatter.ofPattern("yyyy-MM")));
-        }
-       if(asc) {
-        	Collections.reverse(list);
-        }
-        return list;
-
+        return Times.getLastMonths(size, asc);
     }
 
 	 /**
@@ -1698,6 +1689,47 @@ public class Func {
 		BigDecimal div = bdsub.divide(bdtotal,4,BigDecimal.ROUND_HALF_UP);
 		BigDecimal rs = div.multiply(new BigDecimal("100"));
 		return rs.stripTrailingZeros().toPlainString()+"%";
+	}
+	/**
+	 * 将字符串转为字节数组byte[]
+	 * @param s 字符串
+	 * @param charsetName 编码，默认为utf-8
+	 * @return 字节数组byte[]
+	 */
+	public static byte[] string2byte(String s,String charsetName) {
+		byte[] pmdata = null;
+		try {
+			if(isBlank(charsetName)) {charsetName = "utf-8";}
+			pmdata = s.getBytes(charsetName);
+			return pmdata;
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return pmdata;
+	}
+	/**
+	 * 处理SM4密钥：SM4密钥为128 bit，16字节，超过16字节截取，不足16字节的在后补0
+	 @param key
+	 @return
+	 */
+	public static byte[] genSM4key(String key) {
+		byte[] keyBytes = key.getBytes();
+		byte[] keyResult = new byte[16];
+		if(keyBytes.length>16) {
+			System.arraycopy(keyBytes, 0, keyResult, 0, 16);
+		}else if(keyBytes.length<16){
+			int diff = 16-keyBytes.length;
+			StringBuffer sb = new StringBuffer();
+			for(int i=0;i<diff;i++) {
+				sb.append("0");
+			}
+			byte[] pushBytes = sb.toString().getBytes();
+			System.arraycopy(keyBytes, 0, keyResult, 0, keyBytes.length);
+			System.arraycopy(pushBytes, 0, keyResult, keyBytes.length, diff);
+		}else {
+			return keyBytes;
+		}
+		return keyResult;
 	}
 	 /**
 	  * 时间相关方法
@@ -1912,11 +1944,153 @@ public class Func {
 					throw new NullPointerException("dateTimeStr is null");
 				}
 				LocalDateTime result = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-				result.format(dtf);
-				return result.toString();
+				return result.format(dtf).toString();
 			} catch (Exception e) {
 				throw e;
 			}
 		}
+	 
+	 /**
+	  * 获得指定时间月份的第一天
+	  * @param date 时间对象
+	  * @param formatter 时间格式，如：yyyy-MM-dd HH:mm:ss
+	  * @return 字符串类型时间
+	  */
+		public static String monthFirstDay(Date date,String formatter) {
+			formatter = isBlank(formatter)?"yyyy-MM-dd":formatter;
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.add(Calendar.MONTH, 0);
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+	        calendar.set(Calendar.MINUTE, 0);
+	        calendar.set(Calendar.SECOND, 0);
+	        calendar.set(Calendar.MILLISECOND, 0);
+			LocalDate ld = calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			String firstDay = ld.format(DateTimeFormatter.ofPattern(formatter));
+			return firstDay;
+		}
+		/**
+		 * 获得本月第一天,返回格式yyyy-MM-dd
+		 * @return 字符串类型时间
+		 */
+		public static String monthFirstDay() {
+			return monthFirstDay(new Date(),null);
+		}
+		/**
+		 * 获得本月第一天,指定返回格式
+		 * @param formatter 时间格式，如：yyyy-MM-dd HH:mm:ss
+		 * @return 字符串类型时间
+		 */
+		public static String monthFirstDay(String formatter) {
+			return monthFirstDay(new Date(),formatter);
+		}
+		/**
+		 * 获得指定时间月份的最后一天
+		 * @param date 时间对象
+		 * @param formatter 时间格式，如：yyyy-MM-dd HH:mm:ss
+		 * @return 字符串类型时间
+		 */
+		public static String monthLastDay(Date date,String formatter) {
+			formatter = isBlank(formatter)?"yyyy-MM-dd":formatter;
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+			calendar.set(Calendar.HOUR_OF_DAY, 23);
+	        calendar.set(Calendar.MINUTE, 59);
+	        calendar.set(Calendar.SECOND, 59);
+	        calendar.set(Calendar.MILLISECOND, 999);
+			LocalDate ld = calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			String lastDay = ld.format(DateTimeFormatter.ofPattern(formatter));
+			return lastDay;
+		}
+		/**
+		 * 获得本月最后一天,返回格式yyyy-MM-dd
+		 * @return 字符串类型日期
+		 */
+		public static String monthLastDay() {
+			return monthLastDay(new Date(),null);
+		}
+		/**
+		 * 获得本月最后一天,指定返回格式
+		 * @param formatter 时间格式，如：yyyy-MM-dd HH:mm:ss
+		 * @return 字符串类型时间
+		 */
+		public static String monthLastDay(String formatter) {
+			return monthLastDay(new Date(),formatter);
+		}
+		
+		/**
+		 * 获得最近几个月
+		 * @param size 数量
+		 * @param asc 排序，正序：true，倒序：false
+		 * @return 最近size个月列表
+		 */
+		public static List<String> getLastMonths(int size,boolean asc) {
+	        Calendar c = Calendar.getInstance();
+	        c.setTime(new Date());
+	        List<String> list = new ArrayList<String>(size);
+	        for (int i=0;i<size;i++) {
+	            c.setTime(new Date());
+	            c.add(Calendar.MONTH, -i);
+	            Date m = c.getTime();
+	            list.add(Times.date2String(m, DateTimeFormatter.ofPattern("yyyy-MM")));
+	        }
+	       if(asc) {
+	        	Collections.reverse(list);
+	        }
+	        return list;
+
+	    }
+		/**
+		 * 获取指定时间月份的总天数
+		 * @param date 时间对象
+		 * @return 总天数
+		 */
+		public static int monthDaysCount(Date date) {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date==null?new Date():date);
+			calendar.set(Calendar.DATE, 1);
+			calendar.roll(Calendar.DATE, -1);
+			return calendar.get(Calendar.DATE);
+		}
+		/**
+		 * 获取指定年月的总天数
+		 * @param year 年度
+		 * @param month 月份
+		 * @return 总天数
+		 */
+		public static int monthDaysCount(int year, int month) {
+			if(year<1900 || month<=0 || month>12) {return 0;}
+			Calendar calendar = Calendar.getInstance();
+			calendar.set(Calendar.YEAR, year);
+			calendar.set(Calendar.DAY_OF_MONTH, month);
+			calendar.set(Calendar.DATE, 1);
+			calendar.roll(Calendar.DATE, -1);
+			return calendar.get(Calendar.DATE);
+		}
+		
+		/**
+		 * 获取指定月份任意日期的所有天集合
+		 * @param date 指定月份任意日期
+		 * @return 指定月份所有天集合
+		 */
+		public static List<String> getMonthDays(Date date) {
+			List<String> list = new ArrayList<String>();
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(date);
+			int year = calendar.get(Calendar.YEAR);
+			int m = calendar.get(Calendar.MONTH);
+			int daysCount = monthDaysCount(year, m);
+			//从1号开始
+			calendar.set(Calendar.DAY_OF_MONTH, 1);
+			
+			for (int i = 0; i < daysCount; i++, calendar.add(Calendar.DATE, 1)) {
+				Date d = calendar.getTime();
+				list.add(date2String(d, DateTimeFormatter.ISO_LOCAL_DATE));
+			}
+			return list;
+		 }
+		
 	 }
 }

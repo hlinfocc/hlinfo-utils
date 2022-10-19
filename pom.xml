@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.hlinfo</groupId>
   <artifactId>hlinfo-utils</artifactId>
-  <version>1.0.6</version>
+  <version>1.0.7</version>
   
   <name>hlinfo-utils</name>
   <url>https://github.com/hlinfocc/hlinfo-utils</url>
@@ -41,9 +41,9 @@
 	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	  <maven.compiler.source>1.8</maven.compiler.source>
 	  <maven.compiler.target>1.8</maven.compiler.target>
-	  <bouncycastle.version>1.70</bouncycastle.version>
-	  <jackson.version>2.13.2.2</jackson.version>
-	  <spring.boot.starter.data.redis.version>2.5.12</spring.boot.starter.data.redis.version>
+	  <bouncycastle.version>1.72</bouncycastle.version>
+	  <jackson.version>2.13.4.2</jackson.version>
+	  <spring.boot.starter.data.redis.version>2.7.4</spring.boot.starter.data.redis.version>
   </properties>
   
   <dependencies>

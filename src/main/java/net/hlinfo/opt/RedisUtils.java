@@ -70,6 +70,24 @@ public class RedisUtils {
 		operation.set(key, value, timeout, timeUnit);
 		return operation;
 	}
+	
+	/**
+	 * 重置缓存基本的对象，Integer、String、实体类等，带过期时间
+	 *
+	 * @param key      缓存的键
+	 * @param value    缓存的值
+	 * @param timeout  时间
+	 * @param timeUnit 时间颗粒度
+	 * @return 缓存的对象
+	 */
+	public <T> ValueOperations<String, T> resetObject(String key, T value, Integer timeout, TimeUnit timeUnit) {
+		if(this.hashKeys(key)) {
+			this.deleteObject(key);
+		}
+		ValueOperations<String, T> operation = redisTemplate.opsForValue();
+		operation.set(key, value, timeout, timeUnit);
+		return operation;
+	}
 
 	/**
 	 * 获得缓存的基本对象。
@@ -291,7 +309,7 @@ public class RedisUtils {
         try {
             return (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
                 Set<String> binaryKeys = new HashSet<>();
-                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(realKey).count(Integer.MAX_VALUE).build());
+                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(realKey).count(Integer.MAX_VALUE).build());
                 while (cursor.hasNext()) {
                     binaryKeys.add(new String(cursor.next()));
                 }
