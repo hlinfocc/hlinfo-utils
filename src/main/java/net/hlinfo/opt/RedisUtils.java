@@ -176,7 +176,7 @@ public class RedisUtils {
 	 * 获得缓存的set
 	 *
 	 * @param key
-	 * @return
+	 * @return Set集合
 	 */
 	public <T> Set<T> getCacheSet(String key) {
 		Set<T> dataSet = new HashSet<T>();
@@ -262,7 +262,6 @@ public class RedisUtils {
 	 * 缓存对象数据，指定时间
 	 * @param key 缓存的键
 	 * @param value 缓存的值
-	 * @param minutes 分钟
 	 * @return 缓存的对象
 	 */
 	public <T> ValueOperations<String, T> resetCacheData(String key, T value) {
@@ -510,7 +509,7 @@ public class RedisUtils {
      * key集合与otherKey集合的交集存储到destKey集合中
      *
      * @param key 健
-     * @param otherKeys 多个健集合
+     * @param otherKey 多个健集合
      * @param destKey 新的健
      * @return 操作结果
      */
@@ -563,8 +562,8 @@ public class RedisUtils {
      * @param destKey 新的健
      * @return 操作结果
      */
-    public Long sUnionAndStore(String key, String otherKey, String destKey) {
-        return redisTemplate.opsForSet().unionAndStore(key, otherKey, destKey);
+    public Long sUnionAndStore(String key, String otherKeys, String destKey) {
+        return redisTemplate.opsForSet().unionAndStore(key, otherKeys, destKey);
     }
 
     /**
@@ -587,8 +586,8 @@ public class RedisUtils {
      * @param otherKeys 多个健集合
      * @return 操作结果
      */
-    public Set<String> sDifference(String key, String otherKey) {
-        return redisTemplate.opsForSet().difference(key, otherKey);
+    public Set<String> sDifference(String key, String otherKeys) {
+        return redisTemplate.opsForSet().difference(key, otherKeys);
     }
 
     /**
@@ -610,9 +609,8 @@ public class RedisUtils {
      * @param destKey 新的健
      * @return 操作结果
      */
-    public Long sDifference(String key, String otherKey, String destKey) {
-        return redisTemplate.opsForSet().differenceAndStore(key, otherKey,
-                destKey);
+    public Long sDifference(String key, String otherKeys, String destKey) {
+        return redisTemplate.opsForSet().differenceAndStore(key, otherKeys,destKey);
     }
 
     /**

@@ -1646,7 +1646,7 @@ public class Func {
 
 	/**
 	 * 获得最近几个月
-	 * @see Func.Times.getLastMonths
+	 * @see net.hlinfo.opt.Func.Times#getLastMonths
 	 * @param size 数量
 	 * @param asc 排序，正序：true，倒序：false
 	 * @return 最近size个月列表
@@ -1709,8 +1709,8 @@ public class Func {
 	}
 	/**
 	 * 处理SM4密钥：SM4密钥为128 bit，16字节，超过16字节截取，不足16字节的在后补0
-	 @param key
-	 @return
+	 @param key 字符串格式秘钥
+	 @return byte数组格式秘钥
 	 */
 	public static byte[] genSM4key(String key) {
 		byte[] keyBytes = key.getBytes();
