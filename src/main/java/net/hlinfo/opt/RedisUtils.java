@@ -55,6 +55,17 @@ public class RedisUtils {
 		operation.set(key, value);
 		return operation;
 	}
+	/**
+	 * 缓存基本的对象，Integer、String、实体类等
+	 *
+	 * @param key   缓存的键
+	 * @param value 缓存的值
+	 * @return 缓存的对象
+	 */
+	@Deprecated
+	public <T> ValueOperations<String, T> setCacheObject(String key, T value) {
+		return setObject(key,value);
+	}
 
 	/**
 	 * 缓存基本的对象，Integer、String、实体类等，带过期时间
@@ -70,6 +81,35 @@ public class RedisUtils {
 		operation.set(key, value, timeout, timeUnit);
 		return operation;
 	}
+	/**
+	 * 缓存基本的对象，Integer、String、实体类等，带过期时间
+	 * @param key      缓存的键
+	 * @param value    缓存的值
+	 * @param timeout  时间
+	 * @param timeUnit 时间颗粒度
+	 * @return 缓存的对象
+	 */
+	@Deprecated
+	public <T> ValueOperations<String, T> setCacheObject(String key, T value, Integer timeout, TimeUnit timeUnit) {
+		return setObject(key,value,timeout,timeUnit);
+	}
+	/**
+	 * 重置缓存基本的对象，Integer、String、实体类等，带过期时间
+	 *
+	 * @param key      缓存的键
+	 * @param value    缓存的值
+	 * @param timeout  时间
+	 * @param timeUnit 时间颗粒度
+	 * @return 缓存的对象
+	 */
+	public <T> ValueOperations<String, T> resetObject(String key, T value, Integer timeout, TimeUnit timeUnit) {
+		if(this.hashKeys(key)) {
+			this.deleteObject(key);
+		}
+		ValueOperations<String, T> operation = redisTemplate.opsForValue();
+		operation.set(key, value, timeout, timeUnit);
+		return operation;
+	}
 
 	/**
 	 * 获得缓存的基本对象。
@@ -81,7 +121,15 @@ public class RedisUtils {
 		ValueOperations<String, T> operation = redisTemplate.opsForValue();
 		return operation.get(key);
 	}
-	
+	/**
+	 * 获得缓存的基本对象。
+	 * @param key 缓存的键
+	 * @return 缓存的键对应的数据
+	 */
+	@Deprecated
+	public <T> T getCacheObject(String key) {
+		return getObject(key);
+	}
 
 	/**
 	 * 删除单个对象
@@ -158,7 +206,7 @@ public class RedisUtils {
 	 * 获得缓存的set
 	 *
 	 * @param key
-	 * @return
+	 * @return Set集合
 	 */
 	public <T> Set<T> getCacheSet(String key) {
 		Set<T> dataSet = new HashSet<T>();
@@ -244,7 +292,6 @@ public class RedisUtils {
 	 * 缓存对象数据，指定时间
 	 * @param key 缓存的键
 	 * @param value 缓存的值
-	 * @param minutes 分钟
 	 * @return 缓存的对象
 	 */
 	public <T> ValueOperations<String, T> resetCacheData(String key, T value) {
@@ -291,7 +338,7 @@ public class RedisUtils {
         try {
             return (Set<String>) redisTemplate.execute((RedisCallback<Set<String>>) connection -> {
                 Set<String> binaryKeys = new HashSet<>();
-                Cursor<byte[]> cursor = connection.scan(new ScanOptions.ScanOptionsBuilder().match(realKey).count(Integer.MAX_VALUE).build());
+                Cursor<byte[]> cursor = connection.scan(ScanOptions.scanOptions().match(realKey).count(Integer.MAX_VALUE).build());
                 while (cursor.hasNext()) {
                     binaryKeys.add(new String(cursor.next()));
                 }
@@ -492,7 +539,7 @@ public class RedisUtils {
      * key集合与otherKey集合的交集存储到destKey集合中
      *
      * @param key 健
-     * @param otherKeys 多个健集合
+     * @param otherKey 多个健集合
      * @param destKey 新的健
      * @return 操作结果
      */
@@ -545,8 +592,8 @@ public class RedisUtils {
      * @param destKey 新的健
      * @return 操作结果
      */
-    public Long sUnionAndStore(String key, String otherKey, String destKey) {
-        return redisTemplate.opsForSet().unionAndStore(key, otherKey, destKey);
+    public Long sUnionAndStore(String key, String otherKeys, String destKey) {
+        return redisTemplate.opsForSet().unionAndStore(key, otherKeys, destKey);
     }
 
     /**
@@ -569,8 +616,8 @@ public class RedisUtils {
      * @param otherKeys 多个健集合
      * @return 操作结果
      */
-    public Set<String> sDifference(String key, String otherKey) {
-        return redisTemplate.opsForSet().difference(key, otherKey);
+    public Set<String> sDifference(String key, String otherKeys) {
+        return redisTemplate.opsForSet().difference(key, otherKeys);
     }
 
     /**
@@ -592,9 +639,8 @@ public class RedisUtils {
      * @param destKey 新的健
      * @return 操作结果
      */
-    public Long sDifference(String key, String otherKey, String destKey) {
-        return redisTemplate.opsForSet().differenceAndStore(key, otherKey,
-                destKey);
+    public Long sDifference(String key, String otherKeys, String destKey) {
+        return redisTemplate.opsForSet().differenceAndStore(key, otherKeys,destKey);
     }
 
     /**

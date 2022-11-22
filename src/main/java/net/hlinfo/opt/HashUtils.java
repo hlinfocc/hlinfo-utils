@@ -6,7 +6,7 @@ import org.bouncycastle.crypto.digests.SHA3Digest;
 import org.bouncycastle.crypto.digests.SM3Digest;
 import org.bouncycastle.crypto.macs.HMac;
 import org.bouncycastle.crypto.params.KeyParameter;
-import org.bouncycastle.pqc.math.linearalgebra.ByteUtils;
+import org.bouncycastle.util.encoders.Hex;
 /**
  * 
  * @author 呐喊
@@ -27,7 +27,7 @@ public class HashUtils {
 		sm3.update(pmdata, 0, pmdata.length);
 		byte[] hash = new byte[sm3.getDigestSize()];
 		sm3.doFinal(hash, 0);
-		return ByteUtils.toHexString(hash);
+		return Hex.toHexString(hash);
 	}
 
 	/**
@@ -48,7 +48,7 @@ public class HashUtils {
 		hmac.update(pmdata, 0, pmdata.length);
 		byte[] hash = new byte[hmac.getMacSize()];
 		hmac.doFinal(hash, 0);
-		return ByteUtils.toHexString(hash);
+		return Hex.toHexString(hash);
 	}
 	/**
 	 * sha3加密，生成16进制字符串
@@ -64,7 +64,7 @@ public class HashUtils {
 		sha3.update(pmdata, 0, pmdata.length);
 		byte[] hash = new byte[sha3.getDigestSize()];
 		sha3.doFinal(hash, 0);
-		return ByteUtils.toHexString(hash);
+		return Hex.toHexString(hash);
 	}
 	/**
 	 * sha3 HMAC消息认证，生成16进制字符串
@@ -83,7 +83,7 @@ public class HashUtils {
 		hmac.update(pmdata, 0, pmdata.length);
 		byte[] hash = new byte[hmac.getMacSize()];
 		hmac.doFinal(hash, 0);
-		return ByteUtils.toHexString(hash);
+		return Hex.toHexString(hash);
 	}
 	/**
 	 * 将字符串转为字节数组byte[]
