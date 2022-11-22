@@ -13,18 +13,30 @@ hlinfo-utils是一些常用的java小工具集合。
 
 >请前往Maven中央库查找最新版本
 
+**非SpringBoot工程直接引入：**
+
 ``` xml
 <dependency>
     <groupId>net.hlinfo</groupId>
     <artifactId>hlinfo-utils</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.8</version>
+</dependency>
+```
+
+**Spring Boot 工程则引入hlinfo-utils-spring-boot-starter即可(自动注入相关Bean)：**
+
+```xml
+<dependency>
+  <groupId>net.hlinfo</groupId>
+  <artifactId>hlinfo-utils-spring-boot-starter</artifactId>
+  <version>1.0.1</version>
 </dependency>
 ```
 
 
 ### 2.如何使用？
 
-* Func:静态方法类集合，通过**Func.方法名**直接使用
+* Func：常用静态方法类集合，通过**Func.方法名**直接使用，包含字符串，日期等
 * Jackson：Jackson常用操作方法，均为静态方法可直接使用，通过**Jackson.方法名**使用（非Spring Boot应用需要引入Jackson依赖）
 * RedisUtils：Spring Boot项目Redis常用操作工具（依赖spring-boot-starter-data-redis，使用方法见下文）
 * HashUtils:封装常用的hash散列杂凑算法，有SM3、sha3等（需要引入依赖org.bouncycastle:bcprov-jdk15to18）
@@ -91,6 +103,8 @@ FfmpegUtils使用示例：
 </dependency>
 ```
 
+* RedisUtils使用：
+
 RedisUtils需要引入spring-boot-starter-data-redis依赖,此依赖为Spring Boot自带，不需要加版本号
 
 ``` xml
@@ -99,6 +113,8 @@ RedisUtils需要引入spring-boot-starter-data-redis依赖,此依赖为Spring Bo
 	<artifactId>spring-boot-starter-data-redis</artifactId>
 </dependency>
 ```
+
+
 RedisUtils使用示例（仅限Spring Boot项目）：
 1. 注入RedisUtils（也可以使用构造函数注入）
 
