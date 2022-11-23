@@ -504,12 +504,23 @@ public class RedisUtils {
     }
     
     /**
-     * 增加(自增长), 负数则为自减
-     *
+     * 自增或者自减，正数自增长, 负数则为自减
      * @param key 缓存的键
-     * @return  自增长后的值
+     * @param increment 步长
+     * @deprecated 请使用increment(key, increment)
+     * @return  自增或者自减后的值
      */
+    @Deprecated
     public Long incrBy(String key, long increment) {
+        return redisTemplate.opsForValue().increment(key, increment);
+    }
+    /**
+     * 自增或者自减，正数自增长, 负数则为自减
+     * @param key 缓存的键
+     * @param increment 步长
+     * @return  自增或者自减后的值
+     */
+   public Long increment(String key, long increment) {
         return redisTemplate.opsForValue().increment(key, increment);
     }
     
@@ -558,8 +569,7 @@ public class RedisUtils {
      */
     public Long sIntersectAndStore(String key, Collection<String> otherKeys,
                                    String destKey) {
-        return redisTemplate.opsForSet().intersectAndStore(key, otherKeys,
-                destKey);
+        return redisTemplate.opsForSet().intersectAndStore(key, otherKeys,destKey);
     }
 
     /**
@@ -715,5 +725,12 @@ public class RedisUtils {
      */
     public Set<String> zRange(String key, long start, long end) {
         return redisTemplate.opsForZSet().range(key, start, end);
+    }
+    /**
+     * 获取RedisTemplate实例化对象
+     * @return
+     */
+    public RedisTemplate getRedisTemplate() {
+    	return redisTemplate;
     }
 }
