@@ -1798,6 +1798,14 @@ public class Func {
 				return ld.format(DateTimeFormatter.BASIC_ISO_DATE);
 		 }
 		 /**
+		  * 获取当前日期，格式:yyyy/MM/dd
+		  * @return 当前日期
+		  */
+		 public final static String nowDateSlash() {
+				LocalDate ld = LocalDate.now();
+				return ld.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+		 }
+		 /**
 		  * 获取当前年月:yyyyMM
 		  * @return 当前年月
 		  */

@@ -2,13 +2,23 @@ package net.hlinfo.opt;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
+
+import net.hlinfo.vo.VideoConverInfoVo;
+
 /**
  * ffmpeg命令操作工具
  * @Example
@@ -26,6 +36,10 @@ import com.fasterxml.jackson.databind.JsonNode;
  * </pre>
  */
 public class FfmpegUtils {
+	/**
+	 * log4j日志
+	 */
+	public static final Logger log = LoggerFactory.getLogger(FfmpegUtils.class);
 	/**
 	 * ffmpeg命令路径
 	 */
@@ -114,6 +128,88 @@ public class FfmpegUtils {
 		return result;
 	}
 	/**
+	 * 视频转码为m3u8格式
+	 * @param id 任务标识，用于保存转换信息
+	 * @param srcPath 源视频物理路径
+	 * @param outPath m3u8输出目录，如/www/upload/demo，转换后的m3u8地址为/www/upload/demo/index.m3u8
+	 * @param redisCache Redis操作对象（springboot引入hlinfo-utils-redis-spring-boot-starter，将自动注入RedisUtils的bean）
+	 * @return 转换成功的m3u8路径
+	 * @throws Exception 异常信息
+	 */
+    public String toM3u8(String id,
+    		String srcPath,
+    		String outPath,
+    		RedisUtils redisCache) throws Exception {
+        if (!new File(srcPath).exists()) {
+            throw new Exception(srcPath + " 视频不存在");
+        }
+        String ext = srcPath.substring(srcPath.lastIndexOf(".") + 1, srcPath.length()).toLowerCase();
+        String[] allowExt = {"avi","mpg","wmv","3gp","mov","mp4","asf","asx","flv"};
+        if(!Arrays.asList(allowExt).contains(ext)) {
+        	throw new Exception("暂不支持该格式，请先用格式工厂转码(如MP4)后再使用");
+        }
+        File out = new File(outPath);
+        if(!out.exists()) {
+        	out.mkdirs();
+        }
+        List<String> commend = new ArrayList<>();
+        commend.add(ffmpegBin);
+        commend.add("-i");
+        commend.add(srcPath);
+        commend.add("-c:v");
+        commend.add("libx264");
+        commend.add("-flags");
+        commend.add("+cgop");
+        commend.add("-g");
+        commend.add("30");
+        commend.add("-hls_time");
+        commend.add("20");
+        commend.add("-hls_list_size");
+        commend.add("0");
+        commend.add("-hls_segment_filename");
+        commend.add(out.getPath() + "/index%d.ts");
+        commend.add(out.getPath() + "/index.m3u8");
+        Process process = null;
+        try {
+            ProcessBuilder builder = new ProcessBuilder();
+            builder.command(commend);
+            log.debug("cmd=" + builder.toString());
+            process = builder.start();
+            byte[] b = new byte[1024];
+            int readbytes;
+            try (InputStream error = process.getErrorStream(); InputStream is = process.getInputStream()) {
+                while ((readbytes = error.read(b)) != -1) {
+                	String str = new String(b, 0, readbytes);
+                	log.error("E: " + str);
+                    VideoConverInfoVo info = new VideoConverInfoVo();
+                    info.setId(id);
+                    info.setErrorMessage(str);
+                    saveCacheMsg(info,redisCache);
+                }
+                while ((readbytes = is.read(b)) != -1) {
+                	String str = new String(b, 0, readbytes);
+                	log.debug("I: " + str);
+                    VideoConverInfoVo info = new VideoConverInfoVo();
+                    info.setId(id);
+                    info.setInputMessage(str);
+                    saveCacheMsg(info,redisCache);
+                }
+            } catch (IOException e) {
+                log.error("读取FFMPEG转换信息异常", e);
+            }
+            log.info("m3u8保存路径如下：" + out.getPath() + "/index.m3u8");
+
+        } catch (Exception e) {
+            log.error("视频转码为m3u8格式出现异常:", e);
+            throw new Exception("视频转码为m3u8失败");
+        } finally {
+            if (null != process) {
+                process.destroy();
+            }
+        }
+        return out.getPath() + "/index.m3u8";
+    }
+	/**
 	 * 设置ffprobe参数
 	 * @param inputPath 视频文件地址
 	 * @return 命令参数对象
@@ -179,6 +275,24 @@ public class FfmpegUtils {
 			e.getStackTrace();
 			return null;
 		}
+	}
+	/**
+	 * 缓存视频转换信息
+	 * @param info 视频转换信息
+	 * @param redisCache Redis操作对象
+	 */
+	private void saveCacheMsg(VideoConverInfoVo info,RedisUtils redisCache) {
+    	try {
+    		String key = "videoFormatConver:"+info.getId();
+    		List<VideoConverInfoVo> list = redisCache.getCacheList(key);
+    		if(list == null) {
+    			list = new ArrayList<VideoConverInfoVo>();
+    		}
+    		list.add(info);
+    		redisCache.setCacheList(key, list);
+    	}catch(Exception e) {
+    		log.error(e.getMessage(),e);
+    	}
 	}
 	
 	public String getFfmpegBin() {
