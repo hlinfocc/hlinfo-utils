@@ -13,10 +13,13 @@ import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -2091,6 +2095,39 @@ public class Func {
 			}
 			return list;
 		 }
+		/**
+		 * 获取今天还剩余多少时间，需要指定时间单位
+		 * @param unit 时间单位，仅仅支持，ChronoUnit.MICROS、ChronoUnit.SECONDS、ChronoUnit.MINUTES、ChronoUnit.HOURS
+		 * @return 今天剩余的时间
+		 */
+		public static long surplusTime(ChronoUnit unit) {
+			LocalTime midnight = LocalTime.MIDNIGHT;
+			LocalDate today = LocalDate.now();
+			LocalDateTime todayMidnight = LocalDateTime.of(today, midnight);
+			LocalDateTime tomorrowMidnight = todayMidnight.plusDays(1);
+			long surplus = TimeUnit.NANOSECONDS.toSeconds(Duration.between(LocalDateTime.now(), tomorrowMidnight).toNanos());
+			switch (unit) {
+				case MICROS:
+					surplus = surplus * 1000;
+					break;
+				case MINUTES:
+					surplus = surplus/60;
+					break;
+				case HOURS:
+					surplus = surplus/60/60;
+					break;
+				default:
+					break;
+			}
+			return surplus;
+		}
+		/**
+		 * 获取今天还剩余多少分钟
+		 * @return 今天剩余的分钟
+		 */
+		public static long surplusTime() {
+			return surplusTime(ChronoUnit.MINUTES);
+		}
 		
 	 }
 }
