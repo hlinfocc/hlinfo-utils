@@ -55,6 +55,17 @@ public class RedisUtils {
 		operation.set(key, value);
 		return operation;
 	}
+	/**
+	 * 缓存基本的对象，Integer、String、实体类等
+	 *
+	 * @param key   缓存的键
+	 * @param value 缓存的值
+	 * @return 缓存的对象
+	 */
+	@Deprecated
+	public <T> ValueOperations<String, T> setCacheObject(String key, T value) {
+		return setObject(key,value);
+	}
 
 	/**
 	 * 缓存基本的对象，Integer、String、实体类等，带过期时间
@@ -70,7 +81,18 @@ public class RedisUtils {
 		operation.set(key, value, timeout, timeUnit);
 		return operation;
 	}
-	
+	/**
+	 * 缓存基本的对象，Integer、String、实体类等，带过期时间
+	 * @param key      缓存的键
+	 * @param value    缓存的值
+	 * @param timeout  时间
+	 * @param timeUnit 时间颗粒度
+	 * @return 缓存的对象
+	 */
+	@Deprecated
+	public <T> ValueOperations<String, T> setCacheObject(String key, T value, Integer timeout, TimeUnit timeUnit) {
+		return setObject(key,value,timeout,timeUnit);
+	}
 	/**
 	 * 重置缓存基本的对象，Integer、String、实体类等，带过期时间
 	 *
@@ -99,7 +121,15 @@ public class RedisUtils {
 		ValueOperations<String, T> operation = redisTemplate.opsForValue();
 		return operation.get(key);
 	}
-	
+	/**
+	 * 获得缓存的基本对象。
+	 * @param key 缓存的键
+	 * @return 缓存的键对应的数据
+	 */
+	@Deprecated
+	public <T> T getCacheObject(String key) {
+		return getObject(key);
+	}
 
 	/**
 	 * 删除单个对象
@@ -474,12 +504,23 @@ public class RedisUtils {
     }
     
     /**
-     * 增加(自增长), 负数则为自减
-     *
+     * 自增或者自减，正数自增长, 负数则为自减
      * @param key 缓存的键
-     * @return  自增长后的值
+     * @param increment 步长
+     * @deprecated 请使用increment(key, increment)
+     * @return  自增或者自减后的值
      */
+    @Deprecated
     public Long incrBy(String key, long increment) {
+        return redisTemplate.opsForValue().increment(key, increment);
+    }
+    /**
+     * 自增或者自减，正数自增长, 负数则为自减
+     * @param key 缓存的键
+     * @param increment 步长
+     * @return  自增或者自减后的值
+     */
+   public Long increment(String key, long increment) {
         return redisTemplate.opsForValue().increment(key, increment);
     }
     
@@ -528,8 +569,7 @@ public class RedisUtils {
      */
     public Long sIntersectAndStore(String key, Collection<String> otherKeys,
                                    String destKey) {
-        return redisTemplate.opsForSet().intersectAndStore(key, otherKeys,
-                destKey);
+        return redisTemplate.opsForSet().intersectAndStore(key, otherKeys,destKey);
     }
 
     /**
@@ -685,5 +725,12 @@ public class RedisUtils {
      */
     public Set<String> zRange(String key, long start, long end) {
         return redisTemplate.opsForZSet().range(key, start, end);
+    }
+    /**
+     * 获取RedisTemplate实例化对象
+     * @return
+     */
+    public RedisTemplate getRedisTemplate() {
+    	return redisTemplate;
     }
 }

@@ -1,6 +1,10 @@
 package net.hlinfo.opt;
 
 import java.beans.PropertyDescriptor;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -35,6 +39,9 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.servlet.ServletInputStream;
+import javax.servlet.http.HttpServletRequest;
 
 import net.hlinfo.annotation.MColumn;
 
@@ -1695,6 +1702,31 @@ public class Func {
 		return rs.stripTrailingZeros().toPlainString()+"%";
 	}
 	/**
+<<<<<<< HEAD
+     * 获取请求流内容
+     * @param request HttpServletRequest对象
+     * @return 返回文本内容
+     * @throws IOException IO异常
+     */
+    public static String getRequestBody(HttpServletRequest request) throws Exception {
+        BufferedReader reader = null;
+        StringBuffer sb = new StringBuffer();
+        try {
+            ServletInputStream stream = request.getInputStream();
+            // 获取响应
+            reader = new BufferedReader(new InputStreamReader(stream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+        } catch (IOException e) {
+            throw new Exception("读取数据流出现异常！");
+        } finally {
+            reader.close();
+        }
+        return sb.toString();
+    }
+    /**
 	 * 将字符串转为字节数组byte[]
 	 * @param s 字符串
 	 * @param charsetName 编码，默认为utf-8
@@ -1735,6 +1767,7 @@ public class Func {
 		}
 		return keyResult;
 	}
+	
 	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net
@@ -1887,7 +1920,58 @@ public class Func {
 	        calendar.set(Calendar.MILLISECOND, 999);
 	        return calendar.getTime();
 	    }
-	    
+	    /**
+	     * 获取日期对象对应的指定天，
+	     * @param date 日期对象
+	     * @param day 任意天，原则上是本月，超过本月则为下一月的，负数为上一月的
+	     * @param naxtMonth 是否强制下一月
+	     * @param formatter 日期格式，默认yyyy-MM-dd
+	     * @return 字符串日期
+	     */
+	   public static String monthAnyDay(Date date,int day,boolean naxtMonth,String formatter) {
+			formatter = Func.isBlank(formatter)?"yyyy-MM-dd":formatter;
+			Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			if(naxtMonth) {
+				calendar.add(Calendar.MONTH,1);
+			}
+			calendar.set(Calendar.DAY_OF_MONTH, day);
+			calendar.set(Calendar.HOUR_OF_DAY, 0);
+			calendar.set(Calendar.MINUTE, 0);
+			calendar.set(Calendar.SECOND, 0);
+			calendar.set(Calendar.MILLISECOND, 999);
+			LocalDate ld = calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+			String lastDay = ld.format(DateTimeFormatter.ofPattern(formatter));
+			return lastDay;
+		}
+	   /**
+	    * 获取指定日期对象月的第一天
+	    * @param date 日期对象
+	    * @param naxtMonth 是否强制下一月
+	    * @return 字符串日期，格式：yyyy-MM-dd
+	    */
+	   public static String monthFirstDay(Date date,boolean naxtMonth) {
+		   Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			if(naxtMonth) {
+				calendar.add(Calendar.MONTH,1);
+			}
+		   return monthAnyDay(date,calendar.getActualMinimum(Calendar.DAY_OF_MONTH),naxtMonth,null);
+	   }
+	   /**
+	    * 获取指定日期对象月的最后一天
+	    * @param date 日期对象
+	    * @param naxtMonth 是否强制下一月
+	    * @return 字符串日期，格式：yyyy-MM-dd
+	    */
+	   public static String monthLastDay(Date date,boolean naxtMonth) {
+		   Calendar calendar = new GregorianCalendar();
+			calendar.setTime(date);
+			if(naxtMonth) {
+				calendar.add(Calendar.MONTH,1);
+			}
+		   return monthAnyDay(date,calendar.getActualMaximum(Calendar.DAY_OF_MONTH),naxtMonth,null);
+	   }
 	    /**
 		 * 格式化日期
 		 * @param dateStr 日期字符串
@@ -1938,6 +2022,14 @@ public class Func {
 		}
 		/**
 		 * 格式化日期
+		 * @param dateTimeStr 日期字符串,格式：yyyy-MM-dd HH:mm:ss
+		 * @return 格式化的日期时间对象
+		 */
+		public static Date string2Date(String dateTimeStr){
+			return string2Date(dateTimeStr,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		}
+		/**
+		 * 格式化日期
 		 * @param date 日期对象
 		 * @param dtf DateTimeFormatter对象
 		 * @return 格式化的日期字符串
@@ -1945,7 +2037,7 @@ public class Func {
 		public static String date2String(Date date,DateTimeFormatter dtf){
 			try {
 				if(date==null) {
-					throw new NullPointerException("dateTimeStr is null");
+					throw new NullPointerException("date is null");
 				}
 				LocalDateTime result = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 				return result.format(dtf).toString();
@@ -1953,33 +2045,21 @@ public class Func {
 				throw e;
 			}
 		}
-	 
-	 /**
-	  * 获得指定时间月份的第一天
-	  * @param date 时间对象
-	  * @param formatter 时间格式，如：yyyy-MM-dd HH:mm:ss
-	  * @return 字符串类型时间
-	  */
-		public static String monthFirstDay(Date date,String formatter) {
-			formatter = isBlank(formatter)?"yyyy-MM-dd":formatter;
-			Calendar calendar = new GregorianCalendar();
-			calendar.setTime(date);
-			calendar.add(Calendar.MONTH, 0);
-			calendar.set(Calendar.DAY_OF_MONTH, 1);
-			calendar.set(Calendar.HOUR_OF_DAY, 0);
-	        calendar.set(Calendar.MINUTE, 0);
-	        calendar.set(Calendar.SECOND, 0);
-	        calendar.set(Calendar.MILLISECOND, 0);
-			LocalDate ld = calendar.getTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-			String firstDay = ld.format(DateTimeFormatter.ofPattern(formatter));
-			return firstDay;
+		/**
+		 * 格式化日期
+		 * @param date 日期对象
+		 * @return 格式化的日期字符串,格式：yyyy-MM-dd HH:mm:ss
+		 */
+		public static String date2String(Date date){
+			return date2String(date,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 		}
+	 
 		/**
 		 * 获得本月第一天,返回格式yyyy-MM-dd
 		 * @return 字符串类型时间
 		 */
 		public static String monthFirstDay() {
-			return monthFirstDay(new Date(),null);
+		   return monthAnyDay(new Date(),1,false,null);
 		}
 		/**
 		 * 获得本月第一天,指定返回格式
@@ -1987,7 +2067,7 @@ public class Func {
 		 * @return 字符串类型时间
 		 */
 		public static String monthFirstDay(String formatter) {
-			return monthFirstDay(new Date(),formatter);
+			return monthAnyDay(new Date(),1,false,formatter);
 		}
 		/**
 		 * 获得指定时间月份的最后一天
@@ -2075,7 +2155,7 @@ public class Func {
 		}
 		
 		/**
-		 * 获取指定月份任意日期的所有天集合
+		 * 获取指定任意日期的所有天集合
 		 * @param date 指定月份任意日期
 		 * @return 指定月份所有天集合
 		 */
