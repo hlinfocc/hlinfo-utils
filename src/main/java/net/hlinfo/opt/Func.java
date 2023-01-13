@@ -52,7 +52,10 @@ import net.hlinfo.annotation.MColumn;
  *  @author 玉之银
  */
 public class Func {
-
+	/**
+	 * 基础字符数组0-9a-zA-Z
+	 */
+	private static final char[] baseCharacter = "0123456789abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 	/**
 	 * 角度与弧度的换算
 	 * @param d
@@ -74,48 +77,30 @@ public class Func {
 	 * @return 是手机号返回true，否则返回false
 	 */
 	public static boolean checkPhone(String phone) {
-		 String CM_NUM = "^((13[4-9])|(14[7-8])|(15[0-2,7-9])|(165)|(178)|(18[2-4,7-8])|(19[5,8]))\\d{8}|(170[3,5,6])\\d{7}$";
-	        String CU_NUM = "^((13[0-2])|(14[5,6])|(15[5-6])|(16[6-7])|(17[1,5,6])|(18[5,6]))\\d{8}|(170[4,7-9])\\d{7}$";
-	        String CT_NUM = "^((133)|(149)|(153)|(162)|(17[3,7])|(18[0,1,9])|(19[1,3,9]))\\d{8}|((170[0-2])|(174[0-5]))\\d{7}$";
-	        Pattern P_CM_NUM = Pattern.compile(CM_NUM);
-	        Matcher M_CM_NUM = P_CM_NUM.matcher(phone);
-	        Pattern P_CU_NUM = Pattern.compile(CU_NUM);
-	        Matcher M_CU_NUM = P_CU_NUM.matcher(phone);
-	        Pattern P_CT_NUM = Pattern.compile(CT_NUM);
-	        Matcher M_CT_NUM = P_CT_NUM.matcher(phone);
-	        if (M_CM_NUM.matches()) {
-	            return true;
-	        }
-	        if (M_CU_NUM.matches()) {
-	            return true;
-	        }
-	        return M_CT_NUM.matches();
-	}
-
-	/**
-	 * 获取随机数
-	 * @param length 随机数长度
-	 * @return 随机数
-	 */
-	public static String getRandom(int length) {
-		Random random = new Random();
-		StringBuilder rs = new StringBuilder();
-		for (int i = 0; i < length; i++) {
-			rs.append(random.nextInt(10));
-		}
-		return rs.toString();
+		 String CN_PHONE_REG = "^1[3|4|5|6|7|8|9]\\d{9}$";
+		 Pattern pattern = Pattern.compile(CN_PHONE_REG);
+		 Matcher matcher = pattern.matcher(phone);
+		 return matcher.matches();
 	}
 
 	/**
 	 * 生成15位数ID
 	 * @return 15位数ID
 	 */
-	public static String getId() {
+	public static String getNumId() {
 		long millis = System.currentTimeMillis();
 		Random random = new Random();
 		int end2 = random.nextInt(99);
 		String string = millis + String.format("%02d", end2);
 		return string;
+	}
+	
+	public static String getId() {
+		return Func.Times.nowDateBasic() + Func.longuuid();
+	}
+	public static String genId() {
+		LocalDate ld = LocalDate.now();
+		return ld.format(DateTimeFormatter.ofPattern("yy")) + "0" + Func.longuuid();
 	}
 
 	/**
@@ -1767,7 +1752,44 @@ public class Func {
 		}
 		return keyResult;
 	}
-	
+	/**
+	 * 获取随机数
+	 * @param length 随机数长度
+	 * @return 随机数
+	 */
+	public static String getRandom(int length) {
+		Random random = new Random();
+		StringBuilder rs = new StringBuilder();
+		for (int i = 0; i < length; i++) {
+			rs.append(random.nextInt(10));
+		}
+		return rs.toString();
+	}
+	/**
+     * 返回指定长度由随机数字+小写字母组成的字符串
+     * 
+     * @param length 指定长度
+     * @return 随机字符串
+     */
+    public static String randomChars(int length) {
+        return randomChars(length, false);
+    }
+
+    /**
+     * 返回指定长度随机数字+字母(大小写敏感)组成的字符串
+     * 
+     * @param length 指定长度
+     * @param caseSensitivity 是否区分大小写
+     * @return 随机字符串
+     */
+    public static String randomChars(int length, boolean caseSensitivity) {
+    	Random random = new Random(System.currentTimeMillis());
+        StringBuilder sb = new StringBuilder();
+        int t = caseSensitivity ? baseCharacter.length : baseCharacter.length - 26;
+        for (int i = 0; i < length; i++)
+            sb.append(baseCharacter[random.nextInt(t)]);
+        return sb.toString();
+    }
 	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net

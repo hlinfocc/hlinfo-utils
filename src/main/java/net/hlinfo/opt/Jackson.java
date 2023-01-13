@@ -1,5 +1,8 @@
 package net.hlinfo.opt;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +16,8 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -43,6 +48,8 @@ public class Jackson {
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         //忽略bean的字段名大小写
 //        mapper.configure(com.fasterxml.jackson.databind.MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,true);
+        //将驼峰转下划线
+//        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
 	/**
 	 * 将对象转换为json字符串
@@ -219,4 +226,79 @@ public class Jackson {
 		}
 	}
 	
+	/**
+	 * 将序列化对象转化为OutputStream或者ByteArrayOutputStream等
+	 * @param out 输出流
+	 * @param data 写入的内容,序列化对象实例
+	 * @param ignoreNull 序列化时是否忽略值为null的属性
+	 * @param s 属性命名策略,如将驼峰转下划线：{@link PropertyNamingStrategies.SNAKE_CASE}
+	 * @return 写入内容后的输出流
+	 */
+	public static OutputStream toOutputStream(OutputStream out,Serializable data,boolean ignoreNull,PropertyNamingStrategy s) {
+		try {
+			if(data==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			if(s!=null) {
+				if(ignoreNull) {
+					// 序列化时忽略值为null的属性
+					mapper.setPropertyNamingStrategy(s).setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.writeValue(out, data);
+				}else {
+					mapper.setPropertyNamingStrategy(s).writeValue(out, data);
+				}
+			}else {				
+				if(ignoreNull) {
+					// 序列化时忽略值为null的属性
+					mapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+					.writeValue(out, data);
+				}else {
+					mapper.writeValue(out, data);
+				}
+			}
+			return out;
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}  catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}  catch (IOException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	/**
+	 * 将序列化对象转化为OutputStream或者OutputStream的派生类，如:ByteArrayOutputStream等
+	 * @param out 输出流
+	 * @param data 写入的内容,序列化对象实例
+	 * @param ignoreNull 序列化时是否忽略值为null的属性
+	 * @return 写入内容后的输出流
+	 */
+	public static OutputStream toOutputStream(OutputStream out,Serializable data,boolean ignoreNull) {
+		return toOutputStream(out, data, ignoreNull, null);
+	}
+	/**
+	 * 将序列化对象转化为OutputStream或者OutputStream的派生类，如:ByteArrayOutputStream等，忽略值为null的属性
+	 * @param out 输出流
+	 * @param data 写入的内容,序列化对象实例
+	 * @return 写入内容后的输出流
+	 */
+	public static OutputStream toOutputStreamIgnoreNull(OutputStream out,Serializable data) {
+		return toOutputStream(out, data, true, null);
+	}
+	/**
+	 * 将序列化对象转化为OutputStream或者OutputStream的派生类，如:ByteArrayOutputStream等,不忽略值为null的属性
+	 * @param out 输出流
+	 * @param data 写入的内容,序列化对象实例
+	 * @return 写入内容后的输出流
+	 */
+	public static OutputStream toOutputStream(OutputStream out,Serializable data) {
+		return toOutputStream(out, data, false, null);
+	}
+	/**
+	 * 获取ObjectMapper对象实例
+	 * @return ObjectMapper对象实例
+	 */
+	public static ObjectMapper getMapper() {
+		return mapper;
+	}
 }
