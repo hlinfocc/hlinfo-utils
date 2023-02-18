@@ -15,8 +15,6 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -215,22 +213,6 @@ public class Func {
 			unicodeBytes = unicodeBytes + "\\u" + hexB;
 		}
 		return unicodeBytes;
-	}
-
-	/**
-	 * 获取多少分钟之后的时间
-	 * @param min 分钟
-	 * @return 指定分钟后的时间，yyyyMMddHHmmss格式
-	 */
-	public final static String getNowFullTimeByXAfter(int min) {
-		if (min == 0) {
-			min = 60;
-		}
-		long time = System.currentTimeMillis();
-		time += min * 1000 * 60;
-		DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
-		String rzDate = df.format(time);
-		return rzDate;
 	}
 
 	/**
@@ -961,22 +943,7 @@ public class Func {
 		}
 		return htmlstr;
 	}
-	/**
-	 * 字符串类型日期转换成Date类型
-	 * @param date 字符串类型日期
-	 * @return Date类型日期
-	 */
-	public static Date string2Date(String date) {
-		try {
-			SimpleDateFormat myFormatter = new SimpleDateFormat("yyyy-MM-dd");
-			java.util.Date mydate = myFormatter.parse("1992-03-29");
-			return mydate;
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return new Date();
-	}
+	
 	/**
 	 * 根据出生年月日获取年龄
 	 * @param birthDay 出生年月日Date对象
@@ -1013,7 +980,7 @@ public class Func {
         Calendar now = Calendar.getInstance();
         if (Func.isNotBlank(birthDay)) {
             now.setTime(new Date());
-            born.setTime(Func.string2Date(birthDay));
+            born.setTime(Func.Times.string2Date(birthDay));
             if (born.after(now)) {
                 throw new IllegalArgumentException("年龄不能超过当前日期");
             }
@@ -1812,12 +1779,42 @@ public class Func {
 				return ld.format(DateTimeFormatter.ISO_LOCAL_DATE);
 		 }
 		 /**
+		 * 指定格式获取日期时间
+		 * @param formatter 时间格式,如：yyyy-MM-dd HH:mm:ss
+		 * @return 指定格式的日期时间
+		 */
+		public static String nowDate(String formatter) {
+			try {
+				if(isBlank(formatter)) {formatter = "yyyy-MM-dd HH:mm:ss";}
+				return LocalDateTime.now().format(DateTimeFormatter.ofPattern(formatter));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return now();
+			}
+		}
+		 /**
 		  * 获取当前日期:yyyyMMdd
 		  * @return 当前日期
 		  */
 		 public final static String nowDateBasic() {
 				LocalDate ld = LocalDate.now();
 				return ld.format(DateTimeFormatter.BASIC_ISO_DATE);
+		 }
+		 /**
+		  * 获取整型的当前日期:yyyyMMdd
+		  * @return 当前日期
+		  */
+		 public final static int nowDateBasicInt() {
+			 LocalDate ld = LocalDate.now();
+			 return string2int(ld.format(DateTimeFormatter.BASIC_ISO_DATE));
+		 }
+		 /**
+		  * 获取长整型的当前日期:yyyyMMdd
+		  * @return 当前日期
+		  */
+		 public final static long nowDateBasicLong() {
+			 LocalDate ld = LocalDate.now();
+			 return string2Long(ld.format(DateTimeFormatter.BASIC_ISO_DATE));
 		 }
 		 /**
 		  * 获取当前日期，格式:yyyy/MM/dd
@@ -1919,7 +1916,28 @@ public class Func {
 		 * @return 添加后的时间对象
 		 */
 		public  static Date dateAddSecond(Date d, long s) {
-			return dateAddSecond(d, (int)s);
+			return dateAddSecond(d, Long.valueOf(s).intValue());
+		}
+		/**
+		 * 获取多少分钟之后的时间
+		 * @param min 分钟
+		 * @return 指定分钟后的时间对象
+		 */
+		public  static Date nowTimeByAfter(int min) {
+			Calendar c = Calendar.getInstance();
+			c.add(Calendar.MINUTE, min);
+			return c.getTime();
+		}
+		/**
+		 * 获取多少分钟之后的时间,指定格式
+		 * @param min 分钟
+		 * @param formatter 时间格式,如：yyyy-MM-dd HH:mm:ss
+		 * @return 指定指定格式多少分钟之后的时间
+		 */
+		public  static String nowTimeByAfter(int min,String formatter) {
+			if(isBlank(formatter)) {formatter = "yyyy-MM-dd HH:mm:ss";}
+			LocalDateTime ld = nowTimeByAfter(min).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+			return ld.format(DateTimeFormatter.ofPattern(formatter));
 		}
 		
 		/**
