@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.hlinfo</groupId>
   <artifactId>hlinfo-utils</artifactId>
-  <version>1.0.11</version>
+  <version>1.1.0</version>
 
   
   <name>hlinfo-utils</name>
@@ -46,6 +46,7 @@
 	  <jackson.version>2.14.0</jackson.version>
 	  <spring.boot.starter.data.redis.version>2.7.4</spring.boot.starter.data.redis.version>
 	  <bouncycastle.version>1.72</bouncycastle.version>
+	  <version.jakarta.servlet.jakarta-servlet-api>6.0.0</version.jakarta.servlet.jakarta-servlet-api>
   </properties>
   
   <dependencies>
@@ -62,6 +63,12 @@
             <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${version.jakarta.servlet.jakarta-servlet-api}</version>
+                <scope>provided</scope>
+            </dependency>
         <dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15to18</artifactId>
