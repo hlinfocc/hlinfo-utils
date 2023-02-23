@@ -26,7 +26,7 @@ public class QueryPages<T> implements Serializable {
 
     /**
      * 一个分页查询的结果集合
-     * @param list 查询结果
+     * @param listData 查询结果
      * @param pager 分页对象
      */
     public QueryPages(List<T> list, MPager pager) {

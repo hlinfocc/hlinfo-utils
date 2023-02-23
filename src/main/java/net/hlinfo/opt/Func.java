@@ -504,64 +504,7 @@ public class Func {
         }
         return "0.0.0.0";
     }
-    /**
-     * 获得访问者的IP地址, 反向代理过的也可以获得,针对Jakarta EE，对应SpringBoot3.0及以上
-     *
-     * @param request
-     *            请求的req对象
-     * @return 来源ip
-     */
-    public static String getIpAddrV2(jakarta.servlet.http.HttpServletRequest request) {
-    	if (request == null)
-    		return "0.0.0.0";
-    	String ip = request.getHeader("X-Forwarded-For");
-    	if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getHeader("Proxy-Client-IP");
-    		}
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getHeader("WL-Proxy-Client-IP");
-    		}
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getHeader("X-Real-IP");
-    		}
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getHeader("HTTP_CLIENT_IP");
-    		}
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-    		}
-    		if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-    			ip = request.getRemoteAddr();
-    			if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
-    				// 根据网卡取本机配置的IP
-    				InetAddress inet = null;
-    				try {
-    					inet = InetAddress.getLocalHost();
-    				} catch (UnknownHostException e) {
-    					e.printStackTrace();
-    				}
-    				ip = inet.getHostAddress();
-    			}
-    		}
-    	} else if (ip.length() > 15) {
-    		String[] ips = ip.split(",");
-    		for (int index = 0; index < ips.length; index++) {
-    			String strIp = ips[index];
-    			if (!("unknown".equalsIgnoreCase(strIp))) {
-    				ip = strIp;
-    				break;
-    			}
-    		}
-    	}
-    	if (isBlank(ip))
-    		return "0.0.0.0";
-    	if (isIPv4Address(ip) || isIPv6Address(ip)) {
-    		return ip;
-    	}
-    	return "0.0.0.0";
-    }
-	
+    
 	/**
 	 * 获取学历
 	 * @param edu 学历数字
@@ -1730,30 +1673,7 @@ public class Func {
         }
         return sb.toString();
     }
-    /**
-     * 获取请求流内容,针对Jakarta EE，对应SpringBoot3.0及以上
-     * @param request HttpServletRequest对象
-     * @return 返回文本内容
-     * @throws IOException IO异常
-     */
-    public static String getRequestBodyV2(jakarta.servlet.http.HttpServletRequest request) throws Exception {
-    	BufferedReader reader = null;
-    	StringBuffer sb = new StringBuffer();
-    	try {
-    		jakarta.servlet.ServletInputStream stream = request.getInputStream();
-    		// 获取响应
-    		reader = new BufferedReader(new InputStreamReader(stream));
-    		String line;
-    		while ((line = reader.readLine()) != null) {
-    			sb.append(line);
-    		}
-    	} catch (IOException e) {
-    		throw new Exception("读取数据流出现异常！");
-    	} finally {
-    		reader.close();
-    	}
-    	return sb.toString();
-    }
+    
     /**
 	 * 将字符串转为字节数组byte[]
 	 * @param s 字符串

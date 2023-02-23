@@ -2,6 +2,8 @@ package net.hlinfo.opt.pager;
 
 import java.io.Serializable;
 
+import net.hlinfo.opt.Jackson;
+
 
 public class MPager implements PageInfo, Serializable {
 
@@ -46,6 +48,17 @@ public class MPager implements PageInfo, Serializable {
         }
         this.pageNumber = pageNumber;
         this.pageSize = pageSize;
+    }
+    public MPager(int pageNumber, int pageSize,int recordCount) {
+    	if (pageNumber < 1) {
+    		pageNumber = 1;
+    	}
+    	if (pageSize < 1) {
+    		pageSize = DEFAULT_PAGE_SIZE;
+    	}
+    	this.pageNumber = pageNumber;
+    	this.pageSize = pageSize;
+    	this.recordCount = recordCount;
     }
 
     public MPager resetPageCount() {
@@ -105,11 +118,7 @@ public class MPager implements PageInfo, Serializable {
 
     @Override
     public String toString() {
-        return String.format(    "size: %d, total: %d, page: %d/%d",
-                                pageSize,
-                                recordCount,
-                                pageNumber,
-                                this.getPageCount());
+        return Jackson.entityToString(this);
     }
 
     @Override
