@@ -454,7 +454,7 @@ public class Func {
      *            请求的req对象
      * @return 来源ip
      */
-    public static String getIpAddr(javax.servlet.http.HttpServletRequest request) {
+    public static String getIpAddr(jakarta.servlet.http.HttpServletRequest request) {
         if (request == null)
             return "0.0.0.0";
         String ip = request.getHeader("X-Forwarded-For");
@@ -1655,11 +1655,11 @@ public class Func {
      * @return 返回文本内容
      * @throws IOException IO异常
      */
-    public static String getRequestBody(javax.servlet.http.HttpServletRequest request) throws Exception {
+    public static String getRequestBody(jakarta.servlet.http.HttpServletRequest request) throws Exception {
         BufferedReader reader = null;
         StringBuffer sb = new StringBuffer();
         try {
-        	javax.servlet.ServletInputStream stream = request.getInputStream();
+        	jakarta.servlet.ServletInputStream stream = request.getInputStream();
             // 获取响应
             reader = new BufferedReader(new InputStreamReader(stream));
             String line;

@@ -6,6 +6,10 @@ hlinfo-utils是一些常用的java小工具集合。
 
 小巧玲珑，静态封装，快速使用
 
+# 分支与版本
+
+* master分支，1.X版本，支持（Java EE）JDK1.8
+* V2分支，2.X版本，支持（Jakarta EE）JDK17
 
 # 快速使用
 
