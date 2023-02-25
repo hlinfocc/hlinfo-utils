@@ -1041,6 +1041,17 @@ public class Func {
         return !equals(s1,s2);
     }
     /**
+	 * 判断list是否为空
+	 * @param list list集合
+	 * @return 如果此list为 null 或者没有元素，则返回 true
+	 */
+	public static boolean listIsBlank(List<?> list) {
+		if (null == list || list.isEmpty()) {
+			return true;
+		}
+		return false;
+	}
+    /**
      * 检测URL地址是否能正常连接
      * @param url 需要测试的URL地址
      * @return 能正常连接返回true，否则返回false
