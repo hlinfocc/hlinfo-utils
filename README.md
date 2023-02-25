@@ -8,8 +8,8 @@ hlinfo-utils是一些常用的java小工具集合。
 
 # 分支与版本
 
-* hlinfo-utils分支(本仓库)，1.X版本，支持（Java EE）JDK1.8
-* [hlinfo-utils-jakarta分支](https://github.com/hlinfocc/hlinfo-utils-jakarta " hlinfo-utils-jakarta分支")，2.X版本，支持（Jakarta EE）JDK17
+* master分支，1.X版本，支持（Java EE）JDK1.8
+* V2分支，2.X版本，支持（Jakarta EE）JDK17
 
 # 快速使用
 
