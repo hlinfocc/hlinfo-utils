@@ -1,5 +1,6 @@
 package net.hlinfo.opt;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -53,7 +54,7 @@ public class Jackson {
     }
 	/**
 	 * 将对象转换为json字符串
-	 * @param object
+	 * @param object 数据对象
 	 * @return json字符串
 	 */
 	public static String toJSONString(Object object) {
@@ -61,7 +62,8 @@ public class Jackson {
 	}
 	/**
 	 * 将对象转换为json字符串，是否格式化输出
-	 * @param object
+	 * @param object 数据对象
+	 * @param pretty 是否格式化输出
 	 * @return 格式化的json字符串
 	 */
 	public static String toJSONString(Object object,boolean pretty) {
@@ -82,6 +84,52 @@ public class Jackson {
 		}
 	}
 	/**
+	 * 将序列化对象转化为json字符串
+	 * @param data 序列化对象实例
+	 * @param pretty 是否格式化输出
+	 * @param ignoreNull 序列化时是否忽略值为null的属性
+	 * @param s 属性命名策略,如将驼峰转下划线：{@link PropertyNamingStrategies.SNAKE_CASE}
+	 * @return 写入内容后的输出流
+	 */
+	public static String toJSONString(Serializable data,boolean pretty,boolean ignoreNull,PropertyNamingStrategy s) {
+		try {
+			if(data==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			String result = "";
+			ObjectMapper mymapper = mapper.copy();
+			if(s!=null) {
+				mymapper = mymapper.setPropertyNamingStrategy(s);
+			}
+			if(ignoreNull) {
+				mymapper = mymapper.setSerializationInclusion(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL);
+			}
+			if(pretty) {
+				result = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(data);
+			}else {
+				result = mapper.writeValueAsString(data);
+			}
+			return result;
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}  catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}  catch (Exception e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	/**
+	 * 将序列化对象转化为json字符串,默认格式化输出
+	 * @param data 序列化对象实例
+	 * @param ignoreNull 序列化时是否忽略值为null的属性
+	 * @param s 属性命名策略,如将驼峰转下划线：{@link PropertyNamingStrategies.SNAKE_CASE}
+	 * @return 写入内容后的输出流
+	 */
+	public static String toJSONString(Serializable data,boolean ignoreNull,PropertyNamingStrategy s) {
+		return toJSONString(data, true, ignoreNull, s);
+	}
+	/**
 	 * 将json字符串反序列化为Java对象
 	 * @param json json字符串
 	 * @param clazz the class of T
@@ -98,6 +146,50 @@ public class Jackson {
 		} catch (JsonProcessingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	/**
+	 * 将json字符串反序列化为Java对象
+	 * @param object 对象
+	 * @param clazz the class of T
+	 * @return 对象T
+	 */
+	public static <T> T toJavaObject(Object object,Class<T> clazz) {
+		try {
+			if(object==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			return mapper.readValue(mapper.writeValueAsString(object), clazz);
+		} catch (JsonMappingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	/**
+	 * 从文件读取json字符串反序列化为Java对象
+	 * @param src json文件
+	 * @param clazz the class of T
+	 * @return 对象T
+	 */
+	public static <T> T toJavaObject(File src,Class<T> clazz) {
+		try {
+			if(src==null || !src.exists()) {
+				throw new NullPointerException("paramter is null");
+			}
+			return mapper.readValue(src, clazz);
+		} catch (JsonMappingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (IOException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		}
 		return null;
@@ -124,6 +216,27 @@ public class Jackson {
 				throw new NullPointerException("paramter is null");
 			}
 			return mapper.readValue(json, getCollectionType(mapper,List.class,clazz));
+		} catch (JsonMappingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return new ArrayList<T>();
+	}
+	/**
+	 * 将json对象反序列化为List,Collection Type方式
+	 * @param object 对象
+	 * @param clazz the class of T
+	 * @return List<T>对象
+	 */
+	public static <T> List<T> toList(Object object,Class<T> clazz) {
+		try {
+			if(object==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			return mapper.readValue(mapper.writeValueAsString(object), getCollectionType(mapper,List.class,clazz));
 		} catch (JsonMappingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (JsonProcessingException e) {

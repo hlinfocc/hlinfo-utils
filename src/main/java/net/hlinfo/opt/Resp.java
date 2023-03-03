@@ -141,18 +141,14 @@ public class Resp<T> {
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> ok(String msg) {
-		this.setCode(OK);
-		this.setMsg(msg);
-		return this;
+		return Resp.NEW(OK, msg);
 	}
 	/**
 	 * 操作成功
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> SUCCESS() {
-		this.setCode(OK);
-		this.setMsg("操作成功");
-		return this;
+		return Resp.NEW(OK, "操作成功");
 	}
 	/**
 	 * 成功类型返回
@@ -211,18 +207,14 @@ public class Resp<T> {
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> error(String msg) {
-		this.setCode(ERROR);
-		this.setMsg(msg);
-		return this;
+		return Resp.NEW(ERROR, msg);
 	}
 	/**
 	 * 操作失败
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> FAIL() {
-		this.setCode(ERROR);
-		this.setMsg("操作失败");
-		return this;
+		return Resp.NEW(ERROR, "操作失败");
 	}
 	/**
 	 * 错误类型返回
