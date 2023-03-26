@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.hlinfo</groupId>
   <artifactId>hlinfo-utils</artifactId>
-  <version>2.0.1</version>
+  <version>2.0.2</version>
 
   
   <name>hlinfo-utils</name>
@@ -47,6 +47,7 @@
 	  <jackson.version>2.14.0</jackson.version>
 	  <spring.boot.starter.data.redis.version>2.7.4</spring.boot.starter.data.redis.version>
 	  <bouncycastle.version>1.72</bouncycastle.version>
+	 <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
   </properties>
   
   <dependencies>
@@ -77,7 +78,13 @@
         	<scope>compile</scope>
 			<optional>true</optional>
 		</dependency>
-        
+		<dependency>
+			<groupId>jakarta.validation</groupId>
+			<artifactId>jakarta.validation-api</artifactId>
+			<version>${jakarta.validation-api.version}</version>
+			<scope>compile</scope>
+			<optional>true</optional>
+		</dependency>
   </dependencies>
   <build>
     <plugins>
