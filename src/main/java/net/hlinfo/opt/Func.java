@@ -455,54 +455,7 @@ public class Func {
      * @return 来源ip
      */
     public static String getIpAddr(javax.servlet.http.HttpServletRequest request) {
-        if (request == null)
-            return "0.0.0.0";
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getHeader("Proxy-Client-IP");
-            }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getHeader("WL-Proxy-Client-IP");
-            }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getHeader("X-Real-IP");
-            }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getHeader("HTTP_CLIENT_IP");
-            }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getHeader("HTTP_X_FORWARDED_FOR");
-            }
-            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
-                ip = request.getRemoteAddr();
-                if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
-	    				// 根据网卡取本机配置的IP
-	    				InetAddress inet = null;
-	    				try {
-	    					inet = InetAddress.getLocalHost();
-	    				} catch (UnknownHostException e) {
-	    					e.printStackTrace();
-	    				}
-	    				ip = inet.getHostAddress();
-    				}
-            }
-        } else if (ip.length() > 15) {
-            String[] ips = ip.split(",");
-            for (int index = 0; index < ips.length; index++) {
-                String strIp = ips[index];
-                if (!("unknown".equalsIgnoreCase(strIp))) {
-                    ip = strIp;
-                    break;
-                }
-            }
-        }
-        if (isBlank(ip))
-            return "0.0.0.0";
-        if (isIPv4Address(ip) || isIPv6Address(ip)) {
-            return ip;
-        }
-        return "0.0.0.0";
+        return IpUtil.getRemoteIp(request);
     }
     
 	/**
@@ -1040,17 +993,7 @@ public class Func {
     public static boolean notequals(String s1, String s2) {
         return !equals(s1,s2);
     }
-    /**
-	 * 判断list是否为空
-	 * @param list list集合
-	 * @return 如果此list为 null 或者没有元素，则返回 true
-	 */
-	public static boolean listIsBlank(List<?> list) {
-		if (null == list || list.isEmpty()) {
-			return true;
-		}
-		return false;
-	}
+   
     /**
      * 检测URL地址是否能正常连接
      * @param url 需要测试的URL地址
