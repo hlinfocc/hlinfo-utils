@@ -151,7 +151,7 @@ public class Jackson {
 		return null;
 	}
 	/**
-	 * 将json字符串反序列化为Java对象
+	 * 将对象反序列化为Java对象
 	 * @param object 对象
 	 * @param clazz the class of T
 	 * @return 对象T
