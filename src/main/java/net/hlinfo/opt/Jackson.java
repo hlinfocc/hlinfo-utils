@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -162,6 +163,26 @@ public class Jackson {
 				throw new NullPointerException("paramter is null");
 			}
 			return mapper.readValue(mapper.writeValueAsString(object), clazz);
+		} catch (JsonMappingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		} catch (JsonProcessingException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}catch (NullPointerException e) {
+			log.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+	/**
+	 * 将对象反序列化为Map对象
+	 * @param object 对象
+	 * @return map对象
+	 */
+	public static Map<String,Object> toMap(Object object) {
+		try {
+			if(object==null) {
+				throw new NullPointerException("paramter is null");
+			}
+			return mapper.readValue(mapper.writeValueAsString(object), Map.class);
 		} catch (JsonMappingException e) {
 			log.log(Level.SEVERE, e.getMessage(), e);
 		} catch (JsonProcessingException e) {

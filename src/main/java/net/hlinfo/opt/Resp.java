@@ -344,4 +344,28 @@ public class Resp<T> {
 			return Resp.NO_DATA("没有数据了");
 		}
 	}
+	/**
+	 * 返回操作对象,msg参数为：操作成功/操作失败
+	 * @param result bool状态，true成功/false失败
+	 * @return Resp对象
+	 */
+	public static <T> Resp<T> operate(boolean result) {
+		if(result) {
+			return Resp.OK("操作成功");
+		}else {
+			return Resp.ERROR("操作失败");
+		}
+	}
+	/**
+	 * 返回查询对象,msg参数为：查询成功/查询失败
+	 * @param result bool状态，true成功/false失败
+	 * @return Resp对象
+	 */
+	public static <T> Resp<T> query(boolean result) {
+		if(result) {
+			return Resp.OK("查询成功");
+		}else {
+			return Resp.NO_DATA("没有数据了");
+		}
+	}
 }
