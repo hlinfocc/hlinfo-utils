@@ -429,6 +429,37 @@ public class RedisUtils {
 		return operation;
 	}
 	/**
+	 * 缓存List数据
+	 *
+	 * @param key      缓存的键
+	 * @param list 待缓存的List数据
+	 * @param timeout  时间
+	 * @param timeUnit 时间颗粒度
+	 * @return 缓存的对象
+	 */
+	public <T> Object setListString(String key, List<T> list, long timeout, TimeUnit timeUnit) {
+		if(this.hashKeys(key)) {this.deleteObject(key);}
+		
+		ValueOperations<String, Object> operation = redisTemplate.opsForValue();
+		operation.set(key, Jackson.toJSONString(list),timeout ,timeUnit);
+		return operation;
+	}
+	/**
+	 * 缓存List数据
+	 *
+	 * @param key      缓存的键
+	 * @param list 待缓存的List数据
+	 * @param minutes 过期时间（分钟）
+	 * @return 缓存的对象
+	 */
+	public <T> Object setListString(String key, List<T> list, long minutes) {
+		if(this.hashKeys(key)) {this.deleteObject(key);}
+		
+		ValueOperations<String, Object> operation = redisTemplate.opsForValue();
+		operation.set(key, Jackson.toJSONString(list),minutes ,TimeUnit.MINUTES);
+		return operation;
+	}
+	/**
 	 * 获得缓存的list对象
 	 * @param key 缓存的键
 	 * @param clazz 对象类型
@@ -438,6 +469,7 @@ public class RedisUtils {
 		if(!this.hashKeys(key)) {return null;}
 		ValueOperations<String, Object> operation = redisTemplate.opsForValue();
 		Object rsdata = operation.get(key);
+		if(rsdata==null) {return null;}
 		List<T> list = Jackson.toList(rsdata.toString(), clazz);
 		return list;
 	}
