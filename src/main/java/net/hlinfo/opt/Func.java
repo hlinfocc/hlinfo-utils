@@ -1707,6 +1707,39 @@ public class Func {
             sb.append(baseCharacter[random.nextInt(t)]);
         return sb.toString();
     }
+    /**
+	 * 检测字符串中是否包含汉字
+	 * @param content 待检测字符串
+	 * @return 包含中文：true，反之：false
+	 */
+	public static boolean containChinese(String content) {
+		if (null == content) {
+			return false;
+		}
+		/**
+		 * 汉字正则<br>
+		 * 参照维基百科汉字Unicode范围(https://zh.wikipedia.org/wiki/%E6%B1%89%E5%AD%97 页面右侧)
+		 */
+		String chineseRegex = "[\u2E80-\u2EFF\u2F00-\u2FDF\u31C0-\u31EF\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF\uD840\uDC00-\uD869\uDEDF\uD869\uDF00-\uD86D\uDF3F\uD86D\uDF40-\uD86E\uDC1F\uD86E\uDC20-\uD873\uDEAF\uD87E\uDC00-\uD87E\uDE1F]+";
+		
+		Pattern pattern = Pattern.compile(chineseRegex,Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+		Matcher matcher = pattern.matcher(content);
+		return matcher.find();
+	}
+	/**
+	 * 检测字符串中是否中文姓名
+	 * 总结中国人姓名：2-60位，只能是中文和·
+	 * @param content 待检测姓名字符串
+	 * @return 是中文姓名：true，反之：false
+	 */
+	public static boolean isChineseRealName(String content) {
+		if (null == content) {
+			return false;
+		}
+		Pattern pattern = Pattern.compile("^[\\u2E80-\\u9FFF·]{2,60}$");
+		Matcher matcher = pattern.matcher(content);
+		return matcher.find();
+	}
 	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net
