@@ -37,6 +37,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import net.hlinfo.annotation.EsFields;
 import net.hlinfo.annotation.MColumn;
 
 
@@ -50,6 +54,8 @@ public class Func {
 	 * 基础字符数组0-9a-zA-Z
 	 */
 	private static final char[] baseCharacter = "0123456789abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+	private static Pattern linePattern = Pattern.compile("_(\\w)");
+	private static Pattern humpPattern = Pattern.compile("[A-Z]");
 	/**
 	 * 角度与弧度的换算
 	 * @param d
@@ -1786,6 +1792,110 @@ public class Func {
 		Matcher matcher = pattern.matcher(content);
 		return matcher.find();
 	}
+	/**
+	 * 下换线转驼峰命名
+	 * @param str 待转换的字符串
+	 * @return 转化的驼峰字符串
+	 */
+	public static String line2Hump(String str) {
+        str = str.toLowerCase();
+        Matcher matcher = linePattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        }
+        matcher.appendTail(sb);
+        return upperFirst(sb.toString());
+    }
+
+	/**
+	 * 驼峰命名转下划线
+	 * @param str 待转换的字符串
+	 * @return 转化的下换线字符串
+	 */
+    public static String hump2Line(String str) {
+        str = lowerFirst(str);
+        Matcher matcher = humpPattern.matcher(str);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
+    }
+    
+    /**
+     * 首字母转小写
+     * @param s
+     * @return
+     */
+    public static String lowerFirst(CharSequence s) {
+        if (null == s)
+            return null;
+        int len = s.length();
+        if (len == 0)
+            return "";
+        char c = s.charAt(0);
+        if (Character.isLowerCase(c))
+            return s.toString();
+        return new StringBuilder(len).append(Character.toLowerCase(c))
+                .append(s.subSequence(1, len))
+                .toString();
+    }
+
+    /**
+     * 生成ES 索引信息
+     * @param clazz 实体类
+     * @param shards ES分片信息
+     * @param replicas ES副本信息
+     * @return
+     */
+    public static String generateESIndexInfo(Class<?> clazz,int shards,int replicas){
+        List<Field> fs = new ArrayList<>();
+        do {
+            Field[] pfs = clazz.getDeclaredFields();
+            fs.addAll(Arrays.asList(pfs));
+            clazz = clazz.getSuperclass();
+        }while(!equals(clazz.getName(), Object.class.getName()));
+        if(fs.isEmpty()){
+            return null;
+        }
+        ObjectMapper jacksonMapper = Jackson.getMapper();
+        ObjectNode rs = jacksonMapper.createObjectNode();
+        ObjectNode settings = jacksonMapper.createObjectNode();
+        ObjectNode index = jacksonMapper.createObjectNode();
+        index.put("number_of_shards",shards);
+        index.put("number_of_replicas",replicas);
+        settings.set("index",index);
+        rs.set("settings",settings);
+        ObjectNode mappings = jacksonMapper.createObjectNode();
+        ObjectNode properties = jacksonMapper.createObjectNode();
+        for (Field f : fs) {
+            EsFields esFields = f.getAnnotation(EsFields.class);
+            if (esFields == null) {
+                continue;
+            }
+            String fieldName = f.getName();
+            ObjectNode fieldObj = jacksonMapper.createObjectNode();
+            fieldObj.put("type",esFields.type().toString().toLowerCase());
+            if(esFields.ikAnalyzer()){
+                fieldObj.put("analyzer","ik_max_word");
+            }else if(isNotBlank(esFields.analyzer())){
+                fieldObj.put("analyzer",esFields.analyzer());
+            }
+            if(esFields.fieldsKeywordType()){
+                ObjectNode keywordType = jacksonMapper.createObjectNode();
+                keywordType.put("type","keyword");
+                ObjectNode keyword = jacksonMapper.createObjectNode();
+                keyword.set("keyword",keywordType);
+                fieldObj.set("fields",keyword);
+            }
+            properties.set(fieldName,fieldObj);
+        }
+        mappings.set("properties",properties);
+        rs.set("mappings",mappings);
+        return rs.toPrettyString();
+    }
 	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net

@@ -141,14 +141,18 @@ public class Resp<T> {
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> ok(String msg) {
-		return Resp.NEW(OK, msg);
+		this.setCode(OK);
+		this.setMsg(msg);
+		return this;
 	}
 	/**
 	 * 操作成功
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> SUCCESS() {
-		return Resp.NEW(OK, "操作成功");
+		this.setCode(OK);
+		this.setMsg("操作成功");
+		return this;
 	}
 	/**
 	 * 成功类型返回
@@ -207,14 +211,18 @@ public class Resp<T> {
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> error(String msg) {
-		return Resp.NEW(ERROR, msg);
+		this.setCode(ERROR);
+		this.setMsg(msg);
+		return this;
 	}
 	/**
 	 * 操作失败
 	 * @return 当前Resp对象
 	 */
 	public Resp<T> FAIL() {
-		return Resp.NEW(ERROR, "操作失败");
+		this.setCode(ERROR);
+		this.setMsg("操作失败");
+		return this;
 	}
 	/**
 	 * 错误类型返回
@@ -343,6 +351,18 @@ public class Resp<T> {
 	 */
 	public static <T> Resp<T> operate(boolean result) {
 		if(result) {
+			return Resp.OK("操作成功");
+		}else {
+			return Resp.ERROR("操作失败");
+		}
+	}
+	/**
+	 * 返回操作对象,msg参数为：操作成功/操作失败
+	 * @param result 状态>0成功/<=0失败
+	 * @return Resp对象
+	 */
+	public static <T> Resp<T> operate(int result) {
+		if(result>0) {
 			return Resp.OK("操作成功");
 		}else {
 			return Resp.ERROR("操作失败");
