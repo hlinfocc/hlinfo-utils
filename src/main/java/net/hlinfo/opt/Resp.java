@@ -357,6 +357,18 @@ public class Resp<T> {
 		}
 	}
 	/**
+	 * 返回操作对象,msg参数为：操作成功/操作失败
+	 * @param result 状态>0成功/<=0失败
+	 * @return Resp对象
+	 */
+	public static <T> Resp<T> operate(int result) {
+		if(result>0) {
+			return Resp.OK("操作成功");
+		}else {
+			return Resp.ERROR("操作失败");
+		}
+	}
+	/**
 	 * 返回查询对象,msg参数为：查询成功/查询失败
 	 * @param result bool状态，true成功/false失败
 	 * @return Resp对象
