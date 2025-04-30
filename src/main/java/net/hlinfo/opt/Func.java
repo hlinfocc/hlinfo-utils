@@ -37,6 +37,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -1750,19 +1753,87 @@ public class Func {
 		return matcher.find();
 	}
 	/**
+     * 将驼峰式命名的字符串转换为使用符号连接方式。如果转换前的驼峰式命名的字符串为空，则返回空字符串。<br>
+     *
+     * @param str    转换前的驼峰式命名的字符串，也可以为符号连接形式
+     * @param symbol 连接符
+     * @return 转换后符号连接方式命名的字符串
+     * @since 4.0.10
+     */
+    public static String toSymbolCase(CharSequence str, char symbol) {
+        if (str == null) {
+            return null;
+        }
+
+        final int length = str.length();
+        final StringBuilder sb = new StringBuilder();
+        char c;
+        for (int i = 0; i < length; i++) {
+            c = str.charAt(i);
+            final Character preChar = (i > 0) ? str.charAt(i - 1) : null;
+            if (Character.isUpperCase(c)) {
+                // 遇到大写字母处理
+                final Character nextChar = (i < str.length() - 1) ? str.charAt(i + 1) : null;
+                if (null != preChar && Character.isUpperCase(preChar)) {
+                    // 前一个字符为大写，则按照一个词对待
+                    sb.append(c);
+                } else if (null != nextChar && Character.isUpperCase(nextChar)) {
+                    // 后一个为大写字母，按照一个词对待
+                    if (null != preChar && symbol != preChar) {
+                        // 前一个是非大写时按照新词对待，加连接符
+                        sb.append(symbol);
+                    }
+                    sb.append(c);
+                } else {
+                    // 前后都为非大写按照新词对待
+                    if (null != preChar && symbol != preChar) {
+                        // 前一个非连接符，补充连接符
+                        sb.append(symbol);
+                    }
+                    sb.append(Character.toLowerCase(c));
+                }
+            } else {
+                if (sb.length() > 0 && Character.isUpperCase(sb.charAt(sb.length() - 1)) && symbol != c) {
+                    // 当结果中前一个字母为大写，当前为小写，说明此字符为新词开始（连接符也表示新词）
+                    sb.append(symbol);
+                }
+                // 小写或符号
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+	/**
 	 * 下换线转驼峰命名
 	 * @param str 待转换的字符串
 	 * @return 转化的驼峰字符串
 	 */
 	public static String line2Hump(String str) {
-        str = str.toLowerCase();
-        Matcher matcher = linePattern.matcher(str);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            matcher.appendReplacement(sb, matcher.group(1).toUpperCase());
+        if (null == str) {
+            return null;
         }
-        matcher.appendTail(sb);
-        return upperFirst(sb.toString());
+        String UNDERLINE = "_";
+        char UNDERLINECHAR = '_';
+        String result = str.toString();
+        if (result.contains(UNDERLINE)) {
+            final StringBuilder sb = new StringBuilder(result.length());
+            boolean upperCase = false;
+            for (int i = 0; i < result.length(); i++) {
+                char c = result.charAt(i);
+
+                if (c == UNDERLINECHAR) {
+                    upperCase = true;
+                } else if (upperCase) {
+                    sb.append(Character.toUpperCase(c));
+                    upperCase = false;
+                } else {
+                    sb.append(Character.toLowerCase(c));
+                }
+            }
+            return sb.toString();
+        } else {
+            return result;
+        }
     }
 
 	/**
@@ -1771,14 +1842,7 @@ public class Func {
 	 * @return 转化的下换线字符串
 	 */
     public static String hump2Line(String str) {
-        str = lowerFirst(str);
-        Matcher matcher = humpPattern.matcher(str);
-        StringBuffer sb = new StringBuffer();
-        while (matcher.find()) {
-            matcher.appendReplacement(sb, "_" + matcher.group(0).toLowerCase());
-        }
-        matcher.appendTail(sb);
-        return sb.toString();
+        return toSymbolCase(str, '_');
     }
     
     /**
@@ -1835,6 +1899,21 @@ public class Func {
             String fieldName = f.getName();
             ObjectNode fieldObj = jacksonMapper.createObjectNode();
             fieldObj.put("type",esFields.type().toString().toLowerCase());
+            if(f.getType()==java.util.Date.class){
+                DateTimeFormat dateTimeFormat = f.getAnnotation(DateTimeFormat.class);
+                if(dateTimeFormat!=null){
+                    String pattern = dateTimeFormat.pattern();
+                    fieldObj.put("format",pattern+"||strict_date_optional_time||epoch_millis");
+                }else{
+                    JsonFormat jsonFormat = f.getAnnotation(JsonFormat.class);
+                    if(jsonFormat!=null){
+                        String pattern = jsonFormat.pattern();
+                        fieldObj.put("format",pattern+"||strict_date_optional_time||epoch_millis");
+                    }else {
+                        fieldObj.put("format", "yyyy-MM-dd HH:mm:ss||strict_date_optional_time||epoch_millis");
+                    }
+                }
+            }
             if(esFields.ikAnalyzer()){
                 fieldObj.put("analyzer","ik_max_word");
             }else if(isNotBlank(esFields.analyzer())){
