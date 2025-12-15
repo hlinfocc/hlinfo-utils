@@ -469,6 +469,7 @@ public class RedisUtils {
 		if(!this.hashKeys(key)) {return null;}
 		ValueOperations<String, Object> operation = redisTemplate.opsForValue();
 		Object rsdata = operation.get(key);
+		if(rsdata==null) {return null;}
 		List<T> list = Jackson.toList(rsdata.toString(), clazz);
 		return list;
 	}

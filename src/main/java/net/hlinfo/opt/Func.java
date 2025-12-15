@@ -1049,6 +1049,7 @@ public class Func {
     public static boolean notequals(String s1, String s2) {
         return !equals(s1,s2);
     }
+   
     /**
      * 检测URL地址是否能正常连接
      * @param url 需要测试的URL地址
@@ -1298,6 +1299,7 @@ public class Func {
 	 */
 	public static String laststr(String s,int len) {
 		if(s==null || "".equals(s)) {return "";}
+		if(s.length()<len) {return s;}
 		return s.trim().substring(s.trim().length()-len);
 
 	}
