@@ -57,10 +57,8 @@ public class Func {
 	 * 基础字符数组0-9a-zA-Z
 	 */
 	private static final char[] baseCharacter = "0123456789abcdefghijkmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
-	
 	private static Pattern linePattern = Pattern.compile("_(\\w)");
-    private static Pattern humpPattern = Pattern.compile("[A-Z]");
-
+	private static Pattern humpPattern = Pattern.compile("[A-Z]");
 	/**
 	 * 角度与弧度的换算
 	 * @param d
@@ -465,8 +463,55 @@ public class Func {
      *            请求的req对象
      * @return 来源ip
      */
-    public static String getIpAddr(javax.servlet.http.HttpServletRequest request) {
-        return IpUtil.getRemoteIp(request);
+    public static String getIpAddr(jakarta.servlet.http.HttpServletRequest request) {
+        if (request == null)
+            return "0.0.0.0";
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("WL-Proxy-Client-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("X-Real-IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_CLIENT_IP");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+            }
+            if (ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip)) {
+                ip = request.getRemoteAddr();
+                if (ip.equals("127.0.0.1") || ip.equals("0:0:0:0:0:0:0:1")) {
+	    				// 根据网卡取本机配置的IP
+	    				InetAddress inet = null;
+	    				try {
+	    					inet = InetAddress.getLocalHost();
+	    				} catch (UnknownHostException e) {
+	    					e.printStackTrace();
+	    				}
+	    				ip = inet.getHostAddress();
+    				}
+            }
+        } else if (ip.length() > 15) {
+            String[] ips = ip.split(",");
+            for (int index = 0; index < ips.length; index++) {
+                String strIp = ips[index];
+                if (!("unknown".equalsIgnoreCase(strIp))) {
+                    ip = strIp;
+                    break;
+                }
+            }
+        }
+        if (isBlank(ip))
+            return "0.0.0.0";
+        if (isIPv4Address(ip) || isIPv6Address(ip)) {
+            return ip;
+        }
+        return "0.0.0.0";
     }
     
 	/**
@@ -1621,11 +1666,11 @@ public class Func {
      * @return 返回文本内容
      * @throws IOException IO异常
      */
-    public static String getRequestBody(javax.servlet.http.HttpServletRequest request) throws Exception {
+    public static String getRequestBody(jakarta.servlet.http.HttpServletRequest request) throws Exception {
         BufferedReader reader = null;
         StringBuffer sb = new StringBuffer();
         try {
-        	javax.servlet.ServletInputStream stream = request.getInputStream();
+        	jakarta.servlet.ServletInputStream stream = request.getInputStream();
             // 获取响应
             reader = new BufferedReader(new InputStreamReader(stream));
             String line;
@@ -1753,6 +1798,47 @@ public class Func {
 		return matcher.find();
 	}
 	/**
+	 * 下换线转驼峰命名
+	 * @param str 待转换的字符串
+	 * @return 转化的驼峰字符串
+	 */
+	public static String line2Hump(String str) {
+		if (null == str) {
+            return null;
+        }
+        String UNDERLINE = "_";
+        char UNDERLINECHAR = '_';
+        String result = str.toString();
+        if (result.contains(UNDERLINE)) {
+            final StringBuilder sb = new StringBuilder(result.length());
+            boolean upperCase = false;
+            for (int i = 0; i < result.length(); i++) {
+                char c = result.charAt(i);
+
+                if (c == UNDERLINECHAR) {
+                    upperCase = true;
+                } else if (upperCase) {
+                    sb.append(Character.toUpperCase(c));
+                    upperCase = false;
+                } else {
+                    sb.append(Character.toLowerCase(c));
+                }
+            }
+            return sb.toString();
+        } else {
+            return result;
+        }
+    }
+
+	/**
+	 * 驼峰命名转下划线
+	 * @param str 待转换的字符串
+	 * @return 转化的下换线字符串
+	 */
+    public static String hump2Line(String str) {
+    	return toSymbolCase(str, '_');
+    }
+    /**
      * 将驼峰式命名的字符串转换为使用符号连接方式。如果转换前的驼峰式命名的字符串为空，则返回空字符串。<br>
      *
      * @param str    转换前的驼峰式命名的字符串，也可以为符号连接形式
@@ -1803,48 +1889,6 @@ public class Func {
         }
         return sb.toString();
     }
-	/**
-	 * 下换线转驼峰命名
-	 * @param str 待转换的字符串
-	 * @return 转化的驼峰字符串
-	 */
-	public static String line2Hump(String str) {
-        if (null == str) {
-            return null;
-        }
-        String UNDERLINE = "_";
-        char UNDERLINECHAR = '_';
-        String result = str.toString();
-        if (result.contains(UNDERLINE)) {
-            final StringBuilder sb = new StringBuilder(result.length());
-            boolean upperCase = false;
-            for (int i = 0; i < result.length(); i++) {
-                char c = result.charAt(i);
-
-                if (c == UNDERLINECHAR) {
-                    upperCase = true;
-                } else if (upperCase) {
-                    sb.append(Character.toUpperCase(c));
-                    upperCase = false;
-                } else {
-                    sb.append(Character.toLowerCase(c));
-                }
-            }
-            return sb.toString();
-        } else {
-            return result;
-        }
-    }
-
-	/**
-	 * 驼峰命名转下划线
-	 * @param str 待转换的字符串
-	 * @return 转化的下换线字符串
-	 */
-    public static String hump2Line(String str) {
-        return toSymbolCase(str, '_');
-    }
-    
     /**
      * 首字母转小写
      * @param s
@@ -1932,7 +1976,6 @@ public class Func {
         rs.set("mappings",mappings);
         return rs.toPrettyString();
     }
-
 	 /**
 	  * 时间相关方法
 	  * @author hlinfo.net

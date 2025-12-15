@@ -244,7 +244,7 @@ public class IpUtil {
      * @param request 请求的request对象
      * @return 来源ip
      */
-    public static String getRemoteIp(javax.servlet.http.HttpServletRequest request) {
+    public static String getRemoteIp(jakarta.servlet.http.HttpServletRequest request) {
         if (request == null)
             return "0.0.0.0";
         String ip = request.getHeader("X-Forwarded-For");

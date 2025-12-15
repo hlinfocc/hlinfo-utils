@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JacksonAnnotationsInside;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * 定义ES 字段信息，用于根据实体自动创建相应的ES索引信息
- * <br>date 2025-03-20
+ * @author hlinfo
+ *
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -25,21 +25,24 @@ public @interface EsFields {
      */
     ESFieldType type() default ESFieldType.Auto;
 
+
     /**
      * 分词器，如：ik_max_word
      */
     String analyzer() default  "";
+
 
     /**
      * 是否使用ik分词器，此属性和analyzer 二选一
      * @return
      */
     boolean ikAnalyzer() default  false;
-
+ 
     /**
      * 是否 keyword": { "type": "keyword" }
      */
     boolean fieldsKeywordType() default false;
+ 
 
     enum ESFieldType {
         Auto, //
