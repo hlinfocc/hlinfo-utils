@@ -902,7 +902,7 @@ public class Func {
 	 */
 	public static boolean isUSCC(String s) {
         if (isBlank(s)) {return false;}
-        Pattern P_USCC = Pattern.compile("^(11|12|13|19|21|29|31|32|33|34|35|39|41|49|51|52|53|59|61|62|69|71|72|79||81|82|91|92|93|A1|A2|N1|N2|N3|N9|Y1)[1-9]{1}[0-9]{5}[0-9A-Z]{9}[0-9A-Z]{1}$");
+        Pattern P_USCC = Pattern.compile("^(11|12|13|19|21|29|31|32|33|34|35|39|41|49|51|52|53|59|61|62|69|71|72|79|81|89|91|92|93|A1|A2|N1|N2|N3|N9|Y1)[1-9]{1}[0-9]{5}[0-9A-Z]{9}[0-9A-Z]{1}$");
 		return isMatch(P_USCC,s);
     }
    
